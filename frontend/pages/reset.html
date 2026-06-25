@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reset Password - CampusConnect</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: var(--bg-dark);
+        position: relative;
+        overflow: hidden;
+        font-family: "Inter", sans-serif;
+      }
+
+      .bg-glow {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(99, 102, 241, 0.05),
+          transparent 60%
+        );
+        z-index: -1;
+      }
+
+      .auth-container {
+        width: 100%;
+        max-width: 420px;
+        padding: 2rem;
+        z-index: 10;
+      }
+
+      .auth-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 2.5rem;
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(20px);
+      }
+
+      .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .auth-header h2 {
+        font-size: 2rem;
+        color: white;
+        font-family: "Outfit", sans-serif;
+        margin-bottom: 0.5rem;
+      }
+
+      .auth-header p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #d1d5db;
+        font-size: 0.95rem;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 0.95rem 1rem;
+        border-radius: 0.85rem;
+        border: 1px solid var(--border-color);
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        outline: none;
+        font-size: 0.95rem;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      }
+
+      .btn {
+        width: 100%;
+        padding: 0.95rem;
+        border-radius: 0.85rem;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .btn-primary {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        border: 1px solid var(--border-color);
+      }
+
+      .error-message {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        padding: 0.95rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+        display: none;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        text-align: center;
+      }
+
+      .success-message {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        padding: 0.95rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+        display: none;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        text-align: center;
+      }
+
+      .back-link {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+      }
+
+      .back-link:hover {
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-glow"></div>
+    <a href="index.html" class="back-link">← Return Home</a>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2>Reset Password</h2>
+          <p>
+            Enter your email to receive a reset link or set a new password using
+            the reset token.
+          </p>
+        </div>
+
+        <div id="error-container" class="error-message"></div>
+        <div id="success-container" class="success-message"></div>
+
+        <form id="request-reset-form">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input
+              type="email"
+              id="reset-email"
+              class="form-control"
+              placeholder="user@example.com"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Send Reset Link</button>
+        </form>
+
+        <div
+          class="divider"
+          style="
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+          "
+        >
+          <span
+            style="flex: 1; border-bottom: 1px solid var(--border-color)"
+          ></span>
+          <span style="padding: 0 0.75rem">or use token</span>
+          <span
+            style="flex: 1; border-bottom: 1px solid var(--border-color)"
+          ></span>
+        </div>
+
+        <form id="reset-password-form">
+          <div class="form-group">
+            <label class="form-label">Reset Token</label>
+            <input
+              type="text"
+              id="reset-token"
+              class="form-control"
+              placeholder="Paste reset token here"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input
+              type="password"
+              id="new-password"
+              class="form-control"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-secondary">
+            Reset Password
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="../assets/js/api.js"></script>
+    <script>
+      const errorContainer = document.getElementById("error-container");
+      const successContainer = document.getElementById("success-container");
+
+      function showError(message) {
+        errorContainer.style.display = "block";
+        errorContainer.textContent = message;
+        successContainer.style.display = "none";
+      }
+
+      function showSuccess(message) {
+        successContainer.style.display = "block";
+        successContainer.textContent = message;
+        errorContainer.style.display = "none";
+      }
+
+      document
+        .getElementById("request-reset-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("reset-email").value;
+
+          try {
+            const response = await api.post("/auth/request-reset", { email });
+            showSuccess(response.message || "Reset link sent.");
+          } catch (err) {
+            showError(err.message || "Unable to send reset email.");
+          }
+        });
+
+      document
+        .getElementById("reset-password-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const token = document.getElementById("reset-token").value;
+          const newPassword = document.getElementById("new-password").value;
+
+          try {
+            const response = await api.post("/auth/reset", {
+              token,
+              new_password: newPassword,
+            });
+            showSuccess(response.message || "Password reset successfully.");
+          } catch (err) {
+            showError(err.message || "Unable to reset password.");
+          }
+        });
+
+      function populateTokenFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const resetToken = params.get("reset_token");
+        if (resetToken) {
+          document.getElementById("reset-token").value = resetToken;
+          document.getElementById("new-password").focus();
+        }
+      }
+
+      populateTokenFromURL();
+    </script>
+  </body>
+</html>

@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from app.core.config import settings
 from app.db.database import Base, engine
-from app.api.endpoints import auth, users, attendance, assignment, subjects, analytics
+from app.api.endpoints import auth, users, attendance, assignment, subjects, analytics, password_reset, social_auth
 
 # Import models so SQLAlchemy creates them
 from app.models import user, attendance as attendance_model, assignment as assignment_model, subject as subject_model, course_material as course_material_model
@@ -21,7 +22,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
+
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.include_router(password_reset.router, prefix="/api/auth", tags=["auth"])
+app.include_router(social_auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(subjects.router, prefix="/api/subjects", tags=["subjects"])
 app.include_router(attendance.router, prefix="/api/attendance", tags=["attendance"])

@@ -15,7 +15,7 @@ class UserUpdate(BaseModel):
     name: Optional[str] = None
     department: Optional[str] = None
     # Password change could be separate or included, but let's keep it simple for profile update
-    
+
 class UserResponse(UserBase):
     id: int
     is_approved: int
@@ -29,3 +29,15 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+
+class PasswordReset(BaseModel):
+    token: str
+    new_password: str
+
+class SocialLoginRequest(BaseModel):
+    provider: str
+    email: EmailStr
+    name: str
