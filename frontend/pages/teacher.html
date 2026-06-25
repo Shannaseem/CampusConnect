@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - CampusConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="text-gradient">CampusConnect</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="nav-dashboard">Dashboard</a>
+                <a href="#" class="nav-item" id="nav-subjects">My Subjects</a>
+                <a href="#" class="nav-item" id="nav-assignments">Assignments</a>
+                <a href="#" class="nav-item" id="nav-profile">Profile Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn btn-secondary btn-block">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('show')">☰</button>
+                    <h3>Teacher Portal</h3>
+                </div>
+                <div class="nav-right">
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="user-name" id="user-name-display">Loading...</span>
+                            <span class="user-role">Teacher</span>
+                        </div>
+                        <div class="user-avatar" id="user-avatar-initial">T</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                
+                <!-- Create Subject Section -->
+                <div class="card-header">
+                    <h3>Quick Actions</h3>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <h4 style="margin-bottom: 1rem; color: white;">Create Subject</h4>
+                        <form id="create-subject-form">
+                            <div class="form-group">
+                                <label class="form-label">Subject Title</label>
+                                <input type="text" id="subj-title" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea id="subj-desc" class="form-control" rows="2" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Create Subject</button>
+                        </form>
+                    </div>
+
+                    <div class="stat-card">
+                        <h4 style="margin-bottom: 1rem; color: white;">Create Assignment</h4>
+                        <form id="assignment-form">
+                            <div class="form-group">
+                                <label class="form-label">Select Subject</label>
+                                <select id="assign-subject" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Assignment Title</label>
+                                <input type="text" id="assign-title" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea id="assign-desc" class="form-control" rows="2" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Deadline</label>
+                                <input type="datetime-local" id="assign-deadline" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Attach File (Optional)</label>
+                                <input type="file" id="assign-file" class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Post Assignment</button>
+                        </form>
+                    </div>
+
+                    <div class="stat-card">
+                        <h4 style="margin-bottom: 1rem; color: white;">Mark Attendance</h4>
+                        <form id="attendance-form">
+                            <div class="form-group">
+                                <label class="form-label">Select Subject</label>
+                                <select id="att-subject" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Select Student</label>
+                                <select id="student-select" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <select id="attendance-status" class="form-control" required>
+                                    <option value="present">Present</option>
+                                    <option value="absent">Absent</option>
+                                    <option value="late">Late</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Mark Attendance</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Subjects Cards -->
+                <div class="card-header mt-4">
+                    <h3>My Subjects</h3>
+                </div>
+                <div class="dashboard-grid" id="subjects-container">
+                    <!-- Dynamic subjects will be injected here -->
+                </div>
+
+                <!-- Update Profile Section (Hidden by default or lower down) -->
+                <div class="card-header mt-4">
+                    <h3>Profile Settings</h3>
+                </div>
+                <div class="stat-card" style="max-width: 500px;">
+                    <form id="profile-form">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="profile-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <input type="text" id="profile-department" class="form-control" placeholder="e.g. Computer Science">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals and Scripts -->
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <script src="../assets/js/teacher.js"></script>
+</body>
+</html>

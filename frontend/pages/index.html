@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect - AI Student Productivity Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        /* Modern Landing Page Styles */
+        .header {
+            background: rgba(5, 5, 10, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .hero {
+            padding: 12rem 5% 8rem 5%;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        /* Abstract Shape */
+        .floating-shape {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.2;
+            animation: float 10s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .shape-1 { top: 10%; left: -10%; }
+        .shape-2 { bottom: 10%; right: -10%; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -50px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        .dashboard-mockup {
+            margin: 4rem auto 0 auto;
+            max-width: 1100px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            background: var(--bg-surface);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            transform: perspective(1000px) rotateX(5deg);
+            transition: var(--transition);
+        }
+
+        .dashboard-mockup:hover {
+            transform: perspective(1000px) rotateX(0deg);
+        }
+
+        .mockup-inner {
+            background: var(--bg-dark);
+            border-radius: var(--radius-md);
+            height: 500px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mockup-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+
+        .features {
+            padding: 8rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2.5rem;
+            text-align: left;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        .cta {
+            padding: 8rem 5%;
+            text-align: center;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer {
+            padding: 4rem 5%;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3.5rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <header class="header">
+        <div class="logo">Campus<span>Connect</span></div>
+        <nav class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="auth.html?mode=login">Login</a>
+        </nav>
+        <a href="auth.html?mode=register" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Join Now</a>
+    </header>
+
+    <section class="hero">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        
+        <h1 class="hero-title animate-fade-in">Manage Classes <br> <span class="text-gradient">Intelligently.</span></h1>
+        <p class="hero-subtitle animate-fade-in delay-100">
+            A premium platform designed to streamline assignments, track attendance, and analyze student performance—all in one seamless, automated ecosystem.
+        </p>
+        <div class="hero-buttons animate-fade-in delay-200">
+            <a href="auth.html?mode=register" class="btn btn-primary">Start for Free</a>
+            <a href="#features" class="btn btn-secondary">Explore Features</a>
+        </div>
+
+        <div class="dashboard-mockup animate-fade-in delay-300">
+            <div class="mockup-inner">
+                <!-- Using an elegant placeholder instead of image -->
+                <div style="text-align: center; color: var(--text-muted);">
+                    <div style="font-size: 4rem; color: var(--primary-color); margin-bottom: 1rem;">✧</div>
+                    <h2 style="font-size: 2rem; color: white;">Next-Gen Education Workflow</h2>
+                    <p>Experience the ultimate dashboard layout inside.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="section-header">
+            <h2 class="section-title">Why choose <span class="text-gradient">CampusConnect?</span></h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Everything you need to manage courses efficiently.</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="glass-panel feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>Smart Subject Management</h3>
+                <p>Create subjects, enroll students, and organize your entire semester logically in a unified dashboard.</p>
+            </div>
+            
+            <div class="glass-panel feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Automated Notifications</h3>
+                <p>Background email engines automatically alert students of new assignments and missed classes.</p>
+            </div>
+            
+            <div class="glass-panel feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>Advanced Analytics</h3>
+                <p>Generate instant performance reports. Track total present/absent days and assignment marks dynamically.</p>
+            </div>
+            
+            <div class="glass-panel feature-card">
+                <div class="feature-icon">📁</div>
+                <h3>Seamless File Uploads</h3>
+                <p>Teachers can attach study materials, and students can submit their assignments directly through the platform.</p>
+            </div>
+            
+            <div class="glass-panel feature-card">
+                <div class="feature-icon">⏱️</div>
+                <h3>Strict Deadlines</h3>
+                <p>Set precise deadlines for assignments. Our API blocks late submissions automatically to enforce discipline.</p>
+            </div>
+            
+            <div class="glass-panel feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure Authentication</h3>
+                <p>Robust JWT authentication with Admin Approval workflow guarantees that only authorized users can enter.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2 style="font-size: 3.5rem; margin-bottom: 1.5rem; font-family: 'Outfit';">Ready to transform your workflow?</h2>
+        <p style="color: var(--text-muted); font-size: 1.2rem; margin-bottom: 2.5rem;">Join thousands of teachers and students.</p>
+        <a href="auth.html?mode=register" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 3rem;">Get Started Now</a>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 CampusConnect. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
