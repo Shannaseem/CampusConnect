@@ -14,13 +14,13 @@ def create_user(db: Session, user: UserCreate):
         email=user.email,
         hashed_password=hashed_password,
         role=user.role,
-        department=user.department
+        department=user.department,
+        is_approved=0  # Regular signup ke liye bhi strictly 0 (Pending) set kar diya
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
-
 
 def create_social_user(db: Session, email: str, name: str, role: RoleEnum = RoleEnum.student):
     random_password = str(uuid.uuid4())
@@ -30,13 +30,12 @@ def create_social_user(db: Session, email: str, name: str, role: RoleEnum = Role
         email=email,
         hashed_password=hashed_password,
         role=role,
-        is_approved=1
+        is_approved=0  # FIX: 1 se badal kar 0 kar diya taake admin approval lazmi ho
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
-
 
 def update_user_password(db: Session, user: User, new_password: str):
     user.hashed_password = get_password_hash(new_password)

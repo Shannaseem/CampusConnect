@@ -1,3 +1,40 @@
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. URL se parameters check karein
+  const urlParams = new URLSearchParams(window.location.search);
+  const socialToken = urlParams.get("social_token");
+
+  if (socialToken) {
+    // 2. Token ko localStorage mein save karein taake api.js isay use kar sakay
+    localStorage.setItem("access_token", socialToken);
+
+    // 3. Pehle pata karein ke user ka role kya hai (Token ko decode karke ya backend se profile mangwa kar)
+    // Abhi temporary hum check karte hain ya default student dashboard par bhejte hain
+    try {
+      // JWT token ka middle part user details contain karta hai
+      const base64Url = socialToken.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const payload = JSON.parse(window.atob(base64));
+
+      const userRole = payload.role; // 'admin', 'teacher', ya 'student'
+
+      // Clean URL parameters taake token screen par nazar na aata rahe
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      // 4. Role ke mutabiq sahi dashboard par redirect karein
+      if (userRole === "admin") {
+        window.location.href = "admin.html";
+      } else if (userRole === "teacher") {
+        window.location.href = "teacher.html";
+      } else {
+        window.location.href = "student.html";
+      }
+    } catch (error) {
+      console.error("Error parsing social token:", error);
+      alert("Login failed during profile setup.");
+    }
+  }
+});
+
 // ============ MOBILE MENU TOGGLE ============
 const hamburger = document.querySelector(".hamburger");
 const navMenu = document.querySelector(".nav-menu");

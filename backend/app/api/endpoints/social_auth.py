@@ -23,7 +23,7 @@ def ensure_oauth_config(provider_name: str, client_id: str, client_secret: str):
     if not client_id or not client_secret:
         raise RuntimeError(
             f"Missing OAuth config for {provider_name}. "
-            "Set {provider_name.upper()}_CLIENT_ID and {provider_name.upper()}_CLIENT_SECRET in .env."
+            f"Set {provider_name.upper()}_CLIENT_ID and {provider_name.upper()}_CLIENT_SECRET in .env."
         )
 
 ensure_oauth_config('google', settings.GOOGLE_CLIENT_ID, settings.GOOGLE_CLIENT_SECRET)
@@ -34,7 +34,10 @@ oauth.register(
     client_id=settings.GOOGLE_CLIENT_ID,
     client_secret=settings.GOOGLE_CLIENT_SECRET,
     server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-    client_kwargs={'scope': 'openid email profile'},
+    client_kwargs={
+        'scope': 'openid email profile',
+        'prompt': 'select_account'  # Google account select karne ka force prompt
+    },
 )
 
 oauth.register(
@@ -80,26 +83,38 @@ async def oauth_callback(provider: str, request: Request, db: Session = Depends(
 
     if provider == 'google':
         try:
-            user_info = await client.parse_id_token(request, token)
+            # Modern Authlib automatically OpenID data 'userinfo' key mein daal deta hai
+            user_info = token.get('userinfo')
+            
+            # Agar 'userinfo' directly na mile, toh sirf token pass kar ke parse karein
+            if not user_info:
+                user_info = await client.parse_id_token(token)
+                
             name = user_info.get('name')
             email = user_info.get('email')
         except Exception:
             logger.exception('Failed to parse id token for google')
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Failed to parse Google id token')
+            
     elif provider == 'github':
         try:
-            user_info = await client.get('user')
+            # FIX: Added token=token in the get request
+            user_info = await client.get('user', token=token)
             profile = user_info.json()
             name = profile.get('name') or profile.get('login')
             email = profile.get('email')
             if not email:
-                emails_resp = await client.get('user/emails')
+                # FIX: Added token=token here as well
+                emails_resp = await client.get('user/emails', token=token)
                 emails = emails_resp.json()
                 primary = next((item for item in emails if item.get('primary') and item.get('verified')), None)
-                email = primary.get('email') if primary else None
+                if primary:
+                    email = primary.get('email')
+                elif emails:
+                    email = emails[0].get('email') # Fallback agar primary na ho
         except OAuthError as e:
             logger.exception('OAuthError when fetching GitHub profile or emails')
-            raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail='Failed to fetch GitHub profile')
+            raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail='Failed to fetch GitHub profile: ' + str(e))
         except Exception:
             logger.exception('Unexpected error when fetching GitHub profile or emails')
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Failed to process GitHub response')

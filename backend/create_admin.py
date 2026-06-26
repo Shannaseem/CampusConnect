@@ -4,6 +4,12 @@ import sys
 # Add the app directory to the system path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# Sabhi zaroori models yahan import kar diye hain taake SQLAlchemy ko koi namaloom (unknown) table na milay
+import app.models.subject
+import app.models.assignment
+import app.models.attendance
+import app.models.course_material  # <--- Yeh line add ki gayi hai
+
 from app.db.database import SessionLocal
 from app.models.user import User, RoleEnum
 from app.core.security import get_password_hash
