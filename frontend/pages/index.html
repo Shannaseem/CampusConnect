@@ -9,9 +9,66 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <style>
+      .social-login {
+        display: flex;
+        gap: 1.25rem;
+        justify-content: center;
+        margin-top: 1rem;
+      }
+      .btn-social-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        background: white;
+        border: 1.5px solid var(--border-color);
+        color: var(--dark-color);
+        font-size: 1.6rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: var(--shadow-sm);
+      }
+      .btn-social-icon:hover {
+        transform: translateY(-4px) scale(1.05);
+        background: #f8fafc;
+      }
+      .btn-social-icon[data-provider="google"]:hover {
+        color: #db4437;
+        border-color: #db4437;
+        box-shadow: 0 10px 20px rgba(219, 68, 55, 0.2);
+      }
+      .btn-social-icon[data-provider="github"]:hover {
+        color: #24292e;
+        border-color: #24292e;
+        box-shadow: 0 10px 20px rgba(36, 41, 46, 0.2);
+      }
+
+      /* Password Toggle Styles for Modal */
+      .password-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .password-container input {
+        width: 100%;
+        padding-right: 2.5rem;
+      }
+      .toggle-password {
+        position: absolute;
+        right: 1rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .toggle-password:hover {
+        color: var(--primary-color);
+      }
+    </style>
   </head>
   <body>
-    <!-- ============ NAVIGATION ============ -->
     <nav class="navbar">
       <div class="nav-container">
         <div class="nav-brand">
@@ -28,15 +85,10 @@
           <a href="#" id="nav-login-btn" class="btn btn-secondary">Login</a>
           <a href="#" id="nav-register-btn" class="btn btn-primary">Register</a>
         </div>
-        <div class="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+        <div class="hamburger"><span></span><span></span><span></span></div>
       </div>
     </nav>
 
-    <!-- ============ HERO SECTION ============ -->
     <section class="hero" id="home">
       <div class="hero-content">
         <div class="hero-text">
@@ -106,36 +158,94 @@
             />
           </div>
           <div class="form-group">
-            <div class="label-row">
-              <label class="form-label">Password</label>
-              <a href="reset.html" class="link-small">Forgot Password?</a>
+            <div
+              class="label-row"
+              style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.5rem;
+              "
+            >
+              <label class="form-label" style="margin-bottom: 0"
+                >Password</label
+              >
+              <a
+                href="reset.html"
+                class="link-small"
+                style="
+                  font-size: 0.85rem;
+                  color: var(--primary-color);
+                  text-decoration: none;
+                "
+                >Forgot Password?</a
+              >
             </div>
-            <input
-              type="password"
-              id="login-password"
-              class="form-control"
-              placeholder="••••••••"
-              required
-            />
+            <div class="password-container">
+              <input
+                type="password"
+                id="login-password"
+                class="form-control"
+                placeholder="••••••••"
+                required
+              />
+              <i
+                class="fas fa-eye toggle-password"
+                onclick="toggleModalPassword('login-password', this)"
+                title="Show Password"
+              ></i>
+            </div>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            style="width: 100%"
+          >
             Log In
           </button>
 
-          <div class="divider">or continue with</div>
-          <div class="social-buttons">
-            <button type="button" class="btn btn-social" data-provider="google">
-              <i class="fab fa-google"></i> Google
-            </button>
-            <button type="button" class="btn btn-social" data-provider="github">
-              <i class="fab fa-github"></i> GitHub
+          <div
+            class="divider"
+            style="
+              display: flex;
+              align-items: center;
+              color: #64748b;
+              font-size: 0.85rem;
+              margin: 1.5rem 0 1rem 0;
+            "
+          >
+            <span
+              style="
+                flex: 1;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                margin-right: 10px;
+              "
+            ></span>
+            or continue with
+            <span
+              style="
+                flex: 1;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                margin-left: 10px;
+              "
+            ></span>
+          </div>
+
+          <div class="social-login">
+            <button
+              type="button"
+              class="btn-social-icon btn-social"
+              data-provider="google"
+              title="Continue with Google"
+            >
+              <i class="fab fa-google"></i>
             </button>
             <button
               type="button"
-              class="btn btn-social"
-              data-provider="facebook"
+              class="btn-social-icon btn-social"
+              data-provider="github"
+              title="Continue with GitHub"
             >
-              <i class="fab fa-facebook"></i> Facebook
+              <i class="fab fa-github"></i>
             </button>
           </div>
         </form>
@@ -163,13 +273,20 @@
           </div>
           <div class="form-group">
             <label class="form-label">Password</label>
-            <input
-              type="password"
-              id="reg-password"
-              class="form-control"
-              placeholder="••••••••"
-              required
-            />
+            <div class="password-container">
+              <input
+                type="password"
+                id="reg-password"
+                class="form-control"
+                placeholder="••••••••"
+                required
+              />
+              <i
+                class="fas fa-eye toggle-password"
+                onclick="toggleModalPassword('reg-password', this)"
+                title="Show Password"
+              ></i>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Account Type</label>
@@ -178,31 +295,63 @@
               <option value="teacher">Teacher</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            style="width: 100%"
+          >
             Create Account
           </button>
 
-          <div class="divider">or sign up with</div>
-          <div class="social-buttons">
-            <button type="button" class="btn btn-social" data-provider="google">
-              <i class="fab fa-google"></i> Google
-            </button>
-            <button type="button" class="btn btn-social" data-provider="github">
-              <i class="fab fa-github"></i> GitHub
+          <div
+            class="divider"
+            style="
+              display: flex;
+              align-items: center;
+              color: #64748b;
+              font-size: 0.85rem;
+              margin: 1.5rem 0 1rem 0;
+            "
+          >
+            <span
+              style="
+                flex: 1;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                margin-right: 10px;
+              "
+            ></span>
+            or sign up with
+            <span
+              style="
+                flex: 1;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                margin-left: 10px;
+              "
+            ></span>
+          </div>
+
+          <div class="social-login">
+            <button
+              type="button"
+              class="btn-social-icon btn-social"
+              data-provider="google"
+              title="Sign up with Google"
+            >
+              <i class="fab fa-google"></i>
             </button>
             <button
               type="button"
-              class="btn btn-social"
-              data-provider="facebook"
+              class="btn-social-icon btn-social"
+              data-provider="github"
+              title="Sign up with GitHub"
             >
-              <i class="fab fa-facebook"></i> Facebook
+              <i class="fab fa-github"></i>
             </button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- ============ BENEFITS SECTION ============ -->
     <section class="benefits">
       <div class="container">
         <h2>Why Choose CampusConnect?</h2>
@@ -243,16 +392,12 @@
         </div>
       </div>
     </section>
-
-    <!-- ============ FEATURES SECTION ============ -->
     <section class="features" id="features">
       <div class="container">
         <h2>Powerful Features</h2>
         <div class="features-grid">
           <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-tasks"></i>
-            </div>
+            <div class="feature-icon"><i class="fas fa-tasks"></i></div>
             <h3>Assignment Management</h3>
             <p>
               Teachers create and manage assignments. Students submit work with
@@ -260,9 +405,7 @@
             </p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-chart-bar"></i>
-            </div>
+            <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
             <h3>Track Your Performance</h3>
             <p>
               Visual progress dashboards with beautiful charts and graphs.
@@ -270,9 +413,7 @@
             </p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-check-circle"></i>
-            </div>
+            <div class="feature-icon"><i class="fas fa-check-circle"></i></div>
             <h3>Attendance Tracking</h3>
             <p>
               Automatic email notifications when marked absent or late. Stay
@@ -282,8 +423,6 @@
         </div>
       </div>
     </section>
-
-    <!-- ============ HOW IT WORKS ============ -->
     <section class="how-it-works" id="how-it-works">
       <div class="container">
         <h2>How It Works</h2>
@@ -318,19 +457,15 @@
         </div>
       </div>
     </section>
-
-    <!-- ============ TESTIMONIALS ============ -->
     <section class="testimonials">
       <div class="container">
         <h2>What Users Say</h2>
         <div class="testimonials-grid">
           <div class="testimonial-card">
             <div class="stars">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i>
             </div>
             <p>
               "CampusConnect has made managing my assignments so easy. I can see
@@ -341,11 +476,9 @@
           </div>
           <div class="testimonial-card">
             <div class="stars">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i>
             </div>
             <p>
               "As a teacher, this platform helps me track student progress
@@ -356,11 +489,9 @@
           </div>
           <div class="testimonial-card">
             <div class="stars">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i>
             </div>
             <p>
               "The admin dashboard gives us complete control. Best investment
@@ -372,8 +503,6 @@
         </div>
       </div>
     </section>
-
-    <!-- ============ SECURITY SECTION ============ -->
     <section class="security">
       <div class="container">
         <h2>Your Data is Safe with Us</h2>
@@ -401,8 +530,6 @@
         </div>
       </div>
     </section>
-
-    <!-- ============ FAQ SECTION ============ -->
     <section class="faq">
       <div class="container">
         <h2>Frequently Asked Questions</h2>
@@ -482,22 +609,21 @@
         </div>
       </div>
     </section>
-
-    <!-- ============ NEWSLETTER ============ -->
     <section class="newsletter">
       <div class="container">
         <div class="newsletter-content">
           <h2>Stay Updated</h2>
           <p>Subscribe to get updates about new features and improvements</p>
           <form class="newsletter-form">
-            <input type="email" placeholder="Enter your email" required />
-            <button type="submit" class="btn btn-primary">Subscribe</button>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              required
+            /><button type="submit" class="btn btn-primary">Subscribe</button>
           </form>
         </div>
       </div>
     </section>
-
-    <!-- ============ CONTACT SECTION ============ -->
     <section class="contact" id="contact">
       <div class="container">
         <h2>Get in Touch</h2>
@@ -521,29 +647,40 @@
             <i class="fas fa-share-alt"></i>
             <h3>Follow Us</h3>
             <div class="social-links">
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-linkedin"></i></a>
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-github"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a
+              ><a href="#"><i class="fab fa-linkedin"></i></a
+              ><a href="#"><i class="fab fa-facebook"></i></a
+              ><a href="#"><i class="fab fa-github"></i></a>
             </div>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- ============ FINAL CTA ============ -->
     <section class="final-cta">
       <div class="container">
         <h2>Ready to Transform Your Academic Journey?</h2>
         <p>Join thousands of students and teachers using CampusConnect</p>
         <div class="cta-buttons">
-          <a href="auth.html" class="btn btn-primary btn-lg">Sign Up Now</a>
-          <a href="auth.html" class="btn btn-secondary btn-lg">Login</a>
+          <a
+            href="#"
+            class="btn btn-primary btn-lg"
+            onclick="
+              document.getElementById('nav-register-btn').click();
+              return false;
+            "
+            >Sign Up Now</a
+          ><a
+            href="#"
+            class="btn btn-secondary btn-lg"
+            onclick="
+              document.getElementById('nav-login-btn').click();
+              return false;
+            "
+            >Login</a
+          >
         </div>
       </div>
     </section>
-
-    <!-- ============ FOOTER ============ -->
     <footer class="footer">
       <div class="container">
         <div class="footer-grid">
@@ -585,9 +722,9 @@
         <div class="footer-bottom">
           <p>&copy; 2026 CampusConnect. All rights reserved.</p>
           <div class="footer-badges">
-            <span><i class="fas fa-lock"></i> Secure</span>
-            <span><i class="fas fa-shield-alt"></i> Protected</span>
-            <span><i class="fas fa-certificate"></i> Verified</span>
+            <span><i class="fas fa-lock"></i> Secure</span
+            ><span><i class="fas fa-shield-alt"></i> Protected</span
+            ><span><i class="fas fa-certificate"></i> Verified</span>
           </div>
         </div>
       </div>
@@ -596,5 +733,20 @@
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/home.js"></script>
+    <script>
+      // Password Toggle Function specific for Modal
+      function toggleModalPassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          input.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+      }
+    </script>
   </body>
 </html>

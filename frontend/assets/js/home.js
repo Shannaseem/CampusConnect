@@ -1,381 +1,187 @@
+/**
+ * CampusConnect - Homepage & Landing Page Core Script
+ * Handles Navigation, Mobile Hamburger Menu, and Authentication Modals
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. URL se parameters check karein
-  const urlParams = new URLSearchParams(window.location.search);
-  const socialToken = urlParams.get("social_token");
-
-  if (socialToken) {
-    // 2. Token ko localStorage mein save karein taake api.js isay use kar sakay
-    localStorage.setItem("access_token", socialToken);
-
-    // 3. Pehle pata karein ke user ka role kya hai (Token ko decode karke ya backend se profile mangwa kar)
-    // Abhi temporary hum check karte hain ya default student dashboard par bhejte hain
-    try {
-      // JWT token ka middle part user details contain karta hai
-      const base64Url = socialToken.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const payload = JSON.parse(window.atob(base64));
-
-      const userRole = payload.role; // 'admin', 'teacher', ya 'student'
-
-      // Clean URL parameters taake token screen par nazar na aata rahe
-      window.history.replaceState({}, document.title, window.location.pathname);
-
-      // 4. Role ke mutabiq sahi dashboard par redirect karein
-      if (userRole === "admin") {
-        window.location.href = "admin.html";
-      } else if (userRole === "teacher") {
-        window.location.href = "teacher.html";
-      } else {
-        window.location.href = "student.html";
-      }
-    } catch (error) {
-      console.error("Error parsing social token:", error);
-      alert("Login failed during profile setup.");
-    }
-  }
-});
-
-// ============ MOBILE MENU TOGGLE ============
-const hamburger = document.querySelector(".hamburger");
-const navMenu = document.querySelector(".nav-menu");
-const navButtons = document.querySelector(".nav-buttons");
-
-if (hamburger) {
-  hamburger.addEventListener("click", () => {
-    navMenu.style.display = navMenu.style.display === "flex" ? "none" : "flex";
-    navButtons.style.display =
-      navButtons.style.display === "flex" ? "none" : "flex";
-
-    // Animate hamburger
-    hamburger.classList.toggle("active");
-  });
-}
-
-// Close mobile menu when clicking on a link
-const navLinks = document.querySelectorAll(".nav-menu a");
-navLinks.forEach((link) => {
-  link.addEventListener("click", () => {
-    navMenu.style.display = "none";
-    navButtons.style.display = "none";
-    if (hamburger) {
-      hamburger.classList.remove("active");
-    }
-  });
-});
-
-// ============ FAQ ACCORDION ============
-const faqItems = document.querySelectorAll(".faq-item");
-
-faqItems.forEach((item) => {
-  const question = item.querySelector(".faq-question");
-
-  question.addEventListener("click", () => {
-    // Close other items
-    faqItems.forEach((otherItem) => {
-      if (otherItem !== item) {
-        otherItem.classList.remove("active");
-      }
-    });
-
-    // Toggle current item
-    item.classList.toggle("active");
-  });
-});
-
-// ============ NEWSLETTER FORM ============
-const newsletterForm = document.querySelector(".newsletter-form");
-
-if (newsletterForm) {
-  newsletterForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const email = newsletterForm.querySelector('input[type="email"]').value;
-
-    if (email) {
-      // Show success message
-      const button = newsletterForm.querySelector("button");
-      const originalText = button.textContent;
-      button.textContent = "✓ Subscribed!";
-      button.style.background = "#10b981";
-
-      // Reset form
-      newsletterForm.reset();
-
-      // Restore button after 3 seconds
-      setTimeout(() => {
-        button.textContent = originalText;
-        button.style.background = "";
-      }, 3000);
-    }
-  });
-}
-
-// ============ SMOOTH SCROLL ENHANCEMENT ============
-document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-  anchor.addEventListener("click", function (e) {
-    const href = this.getAttribute("href");
-    if (href !== "#" && document.querySelector(href)) {
-      e.preventDefault();
-      const target = document.querySelector(href);
-      target.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  });
-});
-
-// ============ INTERSECTION OBSERVER FOR ANIMATIONS ============
-const observerOptions = {
-  threshold: 0.1,
-  rootMargin: "0px 0px -100px 0px",
-};
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.style.animation = "fadeInUp 0.6s ease-out forwards";
-      observer.unobserve(entry.target);
-    }
-  });
-}, observerOptions);
-
-// Observe all cards
-document
-  .querySelectorAll(".benefit-card, .feature-card, .testimonial-card, .step")
-  .forEach((card) => {
-    observer.observe(card);
-  });
-
-// ============ NAVBAR SHADOW ON SCROLL ============
-window.addEventListener("scroll", () => {
+  // ==========================================
+  // 1. DOM ELEMENTS SELECTION
+  // ==========================================
   const navbar = document.querySelector(".navbar");
-  if (window.scrollY > 50) {
-    navbar.style.boxShadow = "0 10px 15px rgba(0, 0, 0, 0.1)";
-  } else {
-    navbar.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
-  }
-});
-
-// ============ ACTIVE NAV LINK HIGHLIGHTING ============
-window.addEventListener("scroll", () => {
-  let current = "";
-
-  const sections = document.querySelectorAll("section");
-  sections.forEach((section) => {
-    const sectionTop = section.offsetTop;
-    const sectionHeight = section.clientHeight;
-    if (scrollY >= sectionTop - 200) {
-      current = section.getAttribute("id");
-    }
-  });
-
-  const navLinks = document.querySelectorAll(".nav-menu a");
-  navLinks.forEach((link) => {
-    link.style.color = "";
-    if (link.getAttribute("href").slice(1) === current) {
-      link.style.color = "#3b82f6";
-      link.style.fontWeight = "600";
-    }
-  });
-});
-
-// ============ COUNTER ANIMATION ============
-const stats = document.querySelectorAll(".stat h3");
-
-const countUp = (element) => {
-  const target =
-    parseInt(element.getAttribute("data-target")) ||
-    parseInt(element.textContent);
-  const increment = target / 50;
-  let current = 0;
-
-  const updateCount = () => {
-    current += increment;
-    if (current < target) {
-      element.textContent =
-        Math.ceil(current) +
-        (element.textContent.includes("+")
-          ? "+"
-          : element.textContent.includes("K")
-            ? "K"
-            : "");
-      requestAnimationFrame(updateCount);
-    } else {
-      element.textContent =
-        target +
-        (element.textContent.includes("+")
-          ? "+"
-          : element.textContent.includes("K")
-            ? "K"
-            : "");
-    }
-  };
-
-  updateCount();
-};
-
-// Observe stats for animation
-const statsObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const statsH3 = entry.target.querySelectorAll("h3");
-        statsH3.forEach((stat) => {
-          if (!stat.getAttribute("data-animated")) {
-            countUp(stat);
-            stat.setAttribute("data-animated", "true");
-          }
-        });
-        statsObserver.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.5 },
-);
-
-const statsSection = document.querySelector(".hero-stats");
-if (statsSection) {
-  statsObserver.observe(statsSection);
-}
-
-// ============ BUTTON RIPPLE EFFECT ============
-const buttons = document.querySelectorAll(".btn");
-
-buttons.forEach((button) => {
-  button.addEventListener("click", function (e) {
-    const ripple = document.createElement("span");
-    const rect = this.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    const x = e.clientX - rect.left - size / 2;
-    const y = e.clientY - rect.top - size / 2;
-
-    ripple.style.width = ripple.style.height = size + "px";
-    ripple.style.left = x + "px";
-    ripple.style.top = y + "px";
-    ripple.classList.add("ripple");
-
-    this.appendChild(ripple);
-
-    setTimeout(() => ripple.remove(), 600);
-  });
-});
-
-// ============ AUTH MODAL CONTROLS ============
-document.addEventListener("DOMContentLoaded", () => {
+  const hamburger = document.querySelector(".hamburger");
   const authModal = document.getElementById("auth-modal");
+  const modalCloseBtn = document.querySelector(".modal-close");
+  const tabLogin = document.getElementById("tab-login");
+  const tabRegister = document.getElementById("tab-register");
+  const loginForm = document.getElementById("login-form");
+  const registerForm = document.getElementById("register-form");
+  const errorContainer = document.getElementById("error-container");
+
+  // Trigger Buttons for Modal
   const navLoginBtn = document.getElementById("nav-login-btn");
   const navRegisterBtn = document.getElementById("nav-register-btn");
   const heroSignupBtn = document.getElementById("hero-signup-btn");
-  const modalCloseBtn = document.querySelector(".modal-close");
-  const authTabs = document.querySelectorAll(".auth-tab");
-  const formSections = document.querySelectorAll(".form-section");
 
-  function openAuthModal(mode = "login") {
-    if (!authModal) return;
-    authModal.classList.add("active");
-    authModal.setAttribute("aria-hidden", "false");
-    document.body.classList.add("modal-open");
-    switchAuthTab(mode);
+  // ==========================================
+  // 2. MOBILE NAVBAR LOGIC (Gemini/SaaS Style)
+  // ==========================================
+  if (hamburger && navbar) {
+    hamburger.addEventListener("click", (e) => {
+      e.stopPropagation(); // Prevents instant closing
+      navbar.classList.toggle("mobile-active");
+
+      // Hamburger icon animation effect (Optional but premium look)
+      const spans = hamburger.querySelectorAll("span");
+      if (navbar.classList.contains("mobile-active")) {
+        spans[0].style.transform = "rotate(45deg) translate(6px, 6px)";
+        spans[1].style.opacity = "0";
+        spans[2].style.transform = "rotate(-45deg) translate(6px, -6px)";
+      } else {
+        spans[0].style.transform = "none";
+        spans[1].style.opacity = "1";
+        spans[2].style.transform = "none";
+      }
+    });
+
+    // Close mobile nav menu when clicking any link inside it
+    const navLinks = navbar.querySelectorAll(".nav-menu a");
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        navbar.classList.remove("mobile-active");
+        resetHamburgerIcon();
+      });
+    });
+
+    // Close mobile nav when clicking anywhere outside the navbar
+    document.addEventListener("click", (e) => {
+      if (
+        !navbar.contains(e.target) &&
+        navbar.classList.contains("mobile-active")
+      ) {
+        navbar.classList.remove("mobile-active");
+        resetHamburgerIcon();
+      }
+    });
   }
 
-  function closeAuthModal() {
-    if (!authModal) return;
-    authModal.classList.remove("active");
-    authModal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("modal-open");
+  function resetHamburgerIcon() {
+    if (!hamburger) return;
+    const spans = hamburger.querySelectorAll("span");
+    spans.forEach((span) => (span.style.transform = "none"));
+    if (spans[1]) spans[1].style.opacity = "1";
   }
 
-  function switchAuthTab(mode) {
-    authTabs.forEach((tab) => {
-      tab.classList.toggle("active", tab.id === `tab-${mode}`);
-    });
-    formSections.forEach((section) => {
-      section.classList.toggle("active", section.id === `${mode}-form`);
-    });
-    const errorContainer = document.getElementById("error-container");
-    if (errorContainer) {
-      errorContainer.style.display = "none";
+  // ==========================================
+  // 3. AUTHENTICATION MODAL SWITCHER & HANDLERS
+  // ==========================================
+
+  // Function to open modal on a specific tab
+  window.openAuthModal = function (mode) {
+    if (!authModal) return;
+
+    // Hide mobile nav if open
+    if (navbar) {
+      navbar.classList.remove("mobile-active");
+      resetHamburgerIcon();
+    }
+
+    authModal.classList.add("show");
+    document.body.style.overflow = "hidden"; // Stop background scrolling
+    if (errorContainer) errorContainer.style.display = "none";
+
+    switchTab(mode);
+  };
+
+  // Function to close modal gracefully
+  window.closeAuthModal = function () {
+    if (!authModal) return;
+    authModal.classList.remove("show");
+    document.body.style.overflow = "auto"; // Restore background scrolling
+  };
+
+  // Tab Switching Core Logic (Login vs Sign Up)
+  function switchTab(mode) {
+    if (!tabLogin || !tabRegister || !loginForm || !registerForm) return;
+
+    if (errorContainer) errorContainer.style.display = "none";
+
+    if (mode === "login") {
+      tabLogin.classList.add("active");
+      tabRegister.classList.remove("active");
+      loginForm.classList.add("active");
+      registerForm.classList.remove("active");
+    } else if (mode === "register") {
+      tabRegister.classList.add("active");
+      tabLogin.classList.remove("active");
+      registerForm.classList.add("active");
+      loginForm.classList.remove("active");
     }
   }
 
-  if (navLoginBtn) {
+  // Event Listeners for Opening Modal
+  if (navLoginBtn)
     navLoginBtn.addEventListener("click", (e) => {
       e.preventDefault();
       openAuthModal("login");
     });
-  }
-
-  if (navRegisterBtn) {
+  if (navRegisterBtn)
     navRegisterBtn.addEventListener("click", (e) => {
       e.preventDefault();
       openAuthModal("register");
     });
-  }
-
-  if (heroSignupBtn) {
+  if (heroSignupBtn)
     heroSignupBtn.addEventListener("click", (e) => {
       e.preventDefault();
       openAuthModal("register");
     });
-  }
 
-  if (modalCloseBtn) {
-    modalCloseBtn.addEventListener("click", closeAuthModal);
-  }
+  // Tabs Click Listeners inside Modal
+  if (tabLogin) tabLogin.addEventListener("click", () => switchTab("login"));
+  if (tabRegister)
+    tabRegister.addEventListener("click", () => switchTab("register"));
 
+  // Close Button Listener
+  if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeAuthModal);
+
+  // Close Modal when clicking outside the card overlay
   if (authModal) {
-    authModal.addEventListener("click", (event) => {
-      if (
-        event.target === authModal ||
-        event.target.classList.contains("modal-overlay")
-      ) {
+    authModal.addEventListener("click", (e) => {
+      if (e.target.classList.contains("modal-overlay")) {
         closeAuthModal();
       }
     });
   }
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
+  // Escape Key Listener to close modal
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.key === "Escape" &&
+      authModal &&
+      authModal.classList.contains("show")
+    ) {
       closeAuthModal();
     }
   });
 
-  authTabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      switchAuthTab(tab.id === "tab-login" ? "login" : "register");
+  // ==========================================
+  // 4. FAQ ACCORDION LOGIC
+  // ==========================================
+  const faqQuestions = document.querySelectorAll(".faq-question");
+  faqQuestions.forEach((question) => {
+    link.addEventListener("click", () => {
+      const answer = question.nextElementSibling;
+      const icon = question.querySelector("i");
+
+      // Toggle current answer
+      if (answer.style.display === "block") {
+        answer.style.display = "none";
+        if (icon) icon.style.transform = "rotate(0deg)";
+      } else {
+        answer.style.display = "block";
+        if (icon) icon.style.transform = "rotate(180deg)";
+      }
     });
   });
+
+  console.log("Homepage loaded successfully! 🚀");
 });
-
-// ============ FORM VALIDATION ============
-const emailInputs = document.querySelectorAll('input[type="email"]');
-
-emailInputs.forEach((input) => {
-  input.addEventListener("blur", function () {
-    const email = this.value;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (email && !emailRegex.test(email)) {
-      this.style.borderColor = "#ef4444";
-      this.style.background = "#fee2e2";
-    } else {
-      this.style.borderColor = "";
-      this.style.background = "";
-    }
-  });
-});
-
-// ============ KEYBOARD NAVIGATION ============
-document.addEventListener("keydown", (e) => {
-  // Close mobile menu on Escape
-  if (e.key === "Escape") {
-    navMenu.style.display = "none";
-    navButtons.style.display = "none";
-    if (hamburger) {
-      hamburger.classList.remove("active");
-    }
-  }
-});
-
-console.log("Homepage loaded successfully! 🎉");

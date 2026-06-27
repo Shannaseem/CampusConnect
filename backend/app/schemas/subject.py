@@ -3,14 +3,23 @@ from typing import Optional, List
 
 class SubjectBase(BaseModel):
     title: str
+    code: Optional[str] = None
     description: Optional[str] = None
+    department: Optional[str] = None
 
 class SubjectCreate(SubjectBase):
-    pass
+    teacher_id: Optional[int] = None
+
+class SubjectUpdate(BaseModel):
+    title: Optional[str] = None
+    code: Optional[str] = None
+    description: Optional[str] = None
+    department: Optional[str] = None
+    teacher_id: Optional[int] = None
 
 class SubjectResponse(SubjectBase):
     id: int
-    teacher_id: int
+    teacher_id: Optional[int] = None
 
     class Config:
         from_attributes = True

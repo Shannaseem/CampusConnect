@@ -3,73 +3,101 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.db.database import get_db
-from app.models.user import User, RoleEnum
 from app.models.subject import Subject, Enrollment
-from app.schemas.subject import SubjectCreate, SubjectResponse, EnrollmentCreate, EnrollmentResponse
-from app.api.deps import get_current_user
+from app.models.user import User, RoleEnum
+from app.schemas.subject import SubjectCreate, SubjectResponse, SubjectUpdate, EnrollmentResponse
+from app.api import deps
 
 router = APIRouter()
 
-@router.post("/", response_model=SubjectResponse)
-def create_subject(
-    subject: SubjectCreate, 
-    db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user)
+@router.post("/", response_model=SubjectResponse, status_code=status.HTTP_201_CREATED)
+def create_new_subject(
+    subject_in: SubjectCreate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
-    if current_user.role != RoleEnum.teacher and current_user.role != RoleEnum.admin:
-        raise HTTPException(status_code=403, detail="Only teachers and admins can create subjects")
+    if current_user.role not in [RoleEnum.teacher, RoleEnum.admin]:
+        raise HTTPException(status_code=403, detail="Not authorized to create subjects")
+
+    if subject_in.code:
+        existing = db.query(Subject).filter(Subject.code == subject_in.code).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Subject code already registered.")
     
-    new_subject = Subject(
-        title=subject.title,
-        description=subject.description,
-        teacher_id=current_user.id
+    if subject_in.teacher_id:
+        teacher = db.query(User).filter(User.id == subject_in.teacher_id, User.role == RoleEnum.teacher).first()
+        if not teacher:
+            raise HTTPException(status_code=404, detail="Teacher not found.")
+
+    db_subject = Subject(
+        title=subject_in.title,
+        code=subject_in.code,
+        description=subject_in.description,
+        department=subject_in.department,
+        teacher_id=subject_in.teacher_id or (current_user.id if current_user.role == RoleEnum.teacher else None)
     )
-    db.add(new_subject)
+    db.add(db_subject)
     db.commit()
-    db.refresh(new_subject)
-    return new_subject
+    db.refresh(db_subject)
+    return db_subject
 
 @router.get("/", response_model=List[SubjectResponse])
-def get_subjects(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_all_subjects(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(deps.get_current_user)
+):
     if current_user.role == RoleEnum.teacher:
-        subjects = db.query(Subject).filter(Subject.teacher_id == current_user.id).all()
+        return db.query(Subject).filter(Subject.teacher_id == current_user.id).all()
     elif current_user.role == RoleEnum.student:
-        # Get subjects student is enrolled in
         enrollments = db.query(Enrollment).filter(Enrollment.student_id == current_user.id).all()
         subject_ids = [e.subject_id for e in enrollments]
-        subjects = db.query(Subject).filter(Subject.id.in_(subject_ids)).all()
-    else: # admin
-        subjects = db.query(Subject).all()
-    return subjects
+        return db.query(Subject).filter(Subject.id.in_(subject_ids)).all()
+    else:
+        return db.query(Subject).all()
 
-@router.post("/{subject_id}/enroll", response_model=EnrollmentResponse)
-def enroll_student(
-    subject_id: int, 
-    student_id: int, 
-    db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user)
+@router.put("/{subject_id}", response_model=SubjectResponse)
+def update_subject(
+    subject_id: int,
+    subject_update: SubjectUpdate,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(deps.get_current_active_admin)
 ):
-    if current_user.role != RoleEnum.teacher and current_user.role != RoleEnum.admin:
-        raise HTTPException(status_code=403, detail="Only teachers and admins can enroll students")
-        
-    subject = db.query(Subject).filter(Subject.id == subject_id).first()
-    if not subject:
+    db_subject = db.query(Subject).filter(Subject.id == subject_id).first()
+    if not db_subject:
         raise HTTPException(status_code=404, detail="Subject not found")
+    
+    if subject_update.teacher_id is not None:
+        if subject_update.teacher_id == 0:
+            db_subject.teacher_id = None
+        else:
+            teacher = db.query(User).filter(User.id == subject_update.teacher_id, User.role == RoleEnum.teacher).first()
+            if not teacher:
+                raise HTTPException(status_code=404, detail="Teacher not found.")
+            db_subject.teacher_id = subject_update.teacher_id
 
-    student = db.query(User).filter(User.id == student_id, User.role == RoleEnum.student).first()
-    if not student:
-        raise HTTPException(status_code=404, detail="Student not found")
+    if subject_update.title:
+        db_subject.title = subject_update.title
+    if subject_update.code:
+        db_subject.code = subject_update.code
+    if subject_update.department:
+        db_subject.department = subject_update.department
+    if subject_update.description is not None:
+        db_subject.description = subject_update.description
 
-    existing_enrollment = db.query(Enrollment).filter(
-        Enrollment.subject_id == subject_id, 
-        Enrollment.student_id == student_id
-    ).first()
-
-    if existing_enrollment:
-        raise HTTPException(status_code=400, detail="Student is already enrolled in this subject")
-
-    new_enrollment = Enrollment(subject_id=subject_id, student_id=student_id)
-    db.add(new_enrollment)
     db.commit()
-    db.refresh(new_enrollment)
-    return new_enrollment
+    db.refresh(db_subject)
+    return db_subject
+
+@router.delete("/{subject_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_subject(
+    subject_id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(deps.get_current_active_admin)
+):
+    db_subject = db.query(Subject).filter(Subject.id == subject_id).first()
+    if not db_subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+    
+    db.delete(db_subject)
+    db.commit()
+    return {"detail": "Subject deleted"}
