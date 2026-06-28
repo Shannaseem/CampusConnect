@@ -10,6 +10,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <style>
+      /* Modal Specific Styles */
       .social-login {
         display: flex;
         gap: 1.25rem;
@@ -82,10 +83,16 @@
           <li><a href="#contact">Contact</a></li>
         </ul>
         <div class="nav-buttons">
-          <a href="#" id="nav-login-btn" class="btn btn-secondary">Login</a>
-          <a href="#" id="nav-register-btn" class="btn btn-primary">Register</a>
+          <button id="nav-login-btn" class="btn btn-secondary">Login</button>
+          <button id="nav-register-btn" class="btn btn-primary">
+            Register
+          </button>
         </div>
-        <div class="hamburger"><span></span><span></span><span></span></div>
+        <div class="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </div>
     </nav>
 
@@ -98,9 +105,9 @@
             performance all in one place
           </p>
           <div class="hero-buttons">
-            <a href="#" id="hero-signup-btn" class="btn btn-primary btn-lg"
-              >Get Started</a
-            >
+            <button id="hero-signup-btn" class="btn btn-primary btn-lg">
+              Get Started
+            </button>
             <a href="#features" class="btn btn-secondary btn-lg">Learn More</a>
           </div>
           <div class="hero-stats">
@@ -126,7 +133,7 @@
       </div>
     </section>
 
-    <div class="auth-modal" id="auth-modal" aria-hidden="true">
+    <div class="auth-modal" id="auth-modal">
       <div class="modal-overlay"></div>
       <div class="modal-card">
         <button class="modal-close" aria-label="Close auth form">×</button>
@@ -144,7 +151,19 @@
           </button>
         </div>
 
-        <div id="error-container" class="error-message"></div>
+        <div
+          id="error-container"
+          class="error-message"
+          style="
+            display: none;
+            color: red;
+            margin-bottom: 10px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+          "
+        ></div>
 
         <form id="login-form" class="form-section active">
           <div class="form-group">
@@ -159,7 +178,6 @@
           </div>
           <div class="form-group">
             <div
-              class="label-row"
               style="
                 display: flex;
                 justify-content: space-between;
@@ -171,7 +189,6 @@
               >
               <a
                 href="reset.html"
-                class="link-small"
                 style="
                   font-size: 0.85rem;
                   color: var(--primary-color);
@@ -204,7 +221,6 @@
           </button>
 
           <div
-            class="divider"
             style="
               display: flex;
               align-items: center;
@@ -304,7 +320,6 @@
           </button>
 
           <div
-            class="divider"
             style="
               display: flex;
               align-items: center;
@@ -392,12 +407,15 @@
         </div>
       </div>
     </section>
+
     <section class="features" id="features">
       <div class="container">
         <h2>Powerful Features</h2>
         <div class="features-grid">
           <div class="feature-card">
-            <div class="feature-icon"><i class="fas fa-tasks"></i></div>
+            <div class="feature-icon">
+              <i class="fas fa-tasks"></i>
+            </div>
             <h3>Assignment Management</h3>
             <p>
               Teachers create and manage assignments. Students submit work with
@@ -405,7 +423,9 @@
             </p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+            <div class="feature-icon">
+              <i class="fas fa-chart-bar"></i>
+            </div>
             <h3>Track Your Performance</h3>
             <p>
               Visual progress dashboards with beautiful charts and graphs.
@@ -413,7 +433,9 @@
             </p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="feature-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
             <h3>Attendance Tracking</h3>
             <p>
               Automatic email notifications when marked absent or late. Stay
@@ -423,6 +445,7 @@
         </div>
       </div>
     </section>
+
     <section class="how-it-works" id="how-it-works">
       <div class="container">
         <h2>How It Works</h2>
@@ -457,15 +480,18 @@
         </div>
       </div>
     </section>
+
     <section class="testimonials">
       <div class="container">
         <h2>What Users Say</h2>
         <div class="testimonials-grid">
           <div class="testimonial-card">
             <div class="stars">
-              <i class="fas fa-star"></i><i class="fas fa-star"></i
-              ><i class="fas fa-star"></i><i class="fas fa-star"></i
-              ><i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
             </div>
             <p>
               "CampusConnect has made managing my assignments so easy. I can see
@@ -476,9 +502,11 @@
           </div>
           <div class="testimonial-card">
             <div class="stars">
-              <i class="fas fa-star"></i><i class="fas fa-star"></i
-              ><i class="fas fa-star"></i><i class="fas fa-star"></i
-              ><i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
             </div>
             <p>
               "As a teacher, this platform helps me track student progress
@@ -489,9 +517,11 @@
           </div>
           <div class="testimonial-card">
             <div class="stars">
-              <i class="fas fa-star"></i><i class="fas fa-star"></i
-              ><i class="fas fa-star"></i><i class="fas fa-star"></i
-              ><i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
             </div>
             <p>
               "The admin dashboard gives us complete control. Best investment
@@ -503,6 +533,7 @@
         </div>
       </div>
     </section>
+
     <section class="security">
       <div class="container">
         <h2>Your Data is Safe with Us</h2>
@@ -530,6 +561,7 @@
         </div>
       </div>
     </section>
+
     <section class="faq">
       <div class="container">
         <h2>Frequently Asked Questions</h2>
@@ -609,21 +641,20 @@
         </div>
       </div>
     </section>
+
     <section class="newsletter">
       <div class="container">
         <div class="newsletter-content">
           <h2>Stay Updated</h2>
           <p>Subscribe to get updates about new features and improvements</p>
           <form class="newsletter-form">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              required
-            /><button type="submit" class="btn btn-primary">Subscribe</button>
+            <input type="email" placeholder="Enter your email" required />
+            <button type="submit" class="btn btn-primary">Subscribe</button>
           </form>
         </div>
       </div>
     </section>
+
     <section class="contact" id="contact">
       <div class="container">
         <h2>Get in Touch</h2>
@@ -647,40 +678,37 @@
             <i class="fas fa-share-alt"></i>
             <h3>Follow Us</h3>
             <div class="social-links">
-              <a href="#"><i class="fab fa-twitter"></i></a
-              ><a href="#"><i class="fab fa-linkedin"></i></a
-              ><a href="#"><i class="fab fa-facebook"></i></a
-              ><a href="#"><i class="fab fa-github"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-github"></i></a>
             </div>
           </div>
         </div>
       </div>
     </section>
+
     <section class="final-cta">
       <div class="container">
         <h2>Ready to Transform Your Academic Journey?</h2>
         <p>Join thousands of students and teachers using CampusConnect</p>
         <div class="cta-buttons">
-          <a
-            href="#"
+          <button
             class="btn btn-primary btn-lg"
-            onclick="
-              document.getElementById('nav-register-btn').click();
-              return false;
-            "
-            >Sign Up Now</a
-          ><a
-            href="#"
-            class="btn btn-secondary btn-lg"
-            onclick="
-              document.getElementById('nav-login-btn').click();
-              return false;
-            "
-            >Login</a
+            onclick="openAuthModal('register')"
           >
+            Sign Up Now
+          </button>
+          <button
+            class="btn btn-secondary btn-lg"
+            onclick="openAuthModal('login')"
+          >
+            Login
+          </button>
         </div>
       </div>
     </section>
+
     <footer class="footer">
       <div class="container">
         <div class="footer-grid">
@@ -722,9 +750,9 @@
         <div class="footer-bottom">
           <p>&copy; 2026 CampusConnect. All rights reserved.</p>
           <div class="footer-badges">
-            <span><i class="fas fa-lock"></i> Secure</span
-            ><span><i class="fas fa-shield-alt"></i> Protected</span
-            ><span><i class="fas fa-certificate"></i> Verified</span>
+            <span><i class="fas fa-lock"></i> Secure</span>
+            <span><i class="fas fa-shield-alt"></i> Protected</span>
+            <span><i class="fas fa-certificate"></i> Verified</span>
           </div>
         </div>
       </div>
@@ -734,7 +762,6 @@
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/home.js"></script>
     <script>
-      // Password Toggle Function specific for Modal
       function toggleModalPassword(inputId, icon) {
         const input = document.getElementById(inputId);
         if (input.type === "password") {

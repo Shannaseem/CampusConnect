@@ -23,14 +23,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const heroSignupBtn = document.getElementById("hero-signup-btn");
 
   // ==========================================
-  // 2. MOBILE NAVBAR LOGIC (Gemini/SaaS Style)
+  // 2. MOBILE NAVBAR LOGIC
   // ==========================================
   if (hamburger && navbar) {
     hamburger.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevents instant closing
+      e.stopPropagation();
       navbar.classList.toggle("mobile-active");
 
-      // Hamburger icon animation effect (Optional but premium look)
       const spans = hamburger.querySelectorAll("span");
       if (navbar.classList.contains("mobile-active")) {
         spans[0].style.transform = "rotate(45deg) translate(6px, 6px)";
@@ -43,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Close mobile nav menu when clicking any link inside it
     const navLinks = navbar.querySelectorAll(".nav-menu a");
     navLinks.forEach((link) => {
       link.addEventListener("click", () => {
@@ -52,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Close mobile nav when clicking anywhere outside the navbar
     document.addEventListener("click", (e) => {
       if (
         !navbar.contains(e.target) &&
@@ -72,37 +69,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ==========================================
-  // 3. AUTHENTICATION MODAL SWITCHER & HANDLERS
+  // 3. AUTHENTICATION MODAL SWITCHER
   // ==========================================
-
-  // Function to open modal on a specific tab
   window.openAuthModal = function (mode) {
     if (!authModal) return;
-
-    // Hide mobile nav if open
     if (navbar) {
       navbar.classList.remove("mobile-active");
       resetHamburgerIcon();
     }
 
     authModal.classList.add("show");
-    document.body.style.overflow = "hidden"; // Stop background scrolling
+    document.body.style.overflow = "hidden";
     if (errorContainer) errorContainer.style.display = "none";
 
     switchTab(mode);
   };
 
-  // Function to close modal gracefully
   window.closeAuthModal = function () {
     if (!authModal) return;
     authModal.classList.remove("show");
-    document.body.style.overflow = "auto"; // Restore background scrolling
+    document.body.style.overflow = "auto";
   };
 
-  // Tab Switching Core Logic (Login vs Sign Up)
   function switchTab(mode) {
     if (!tabLogin || !tabRegister || !loginForm || !registerForm) return;
-
     if (errorContainer) errorContainer.style.display = "none";
 
     if (mode === "login") {
@@ -118,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Event Listeners for Opening Modal
+  // Attach button listeners to open modal
   if (navLoginBtn)
     navLoginBtn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -135,44 +125,34 @@ document.addEventListener("DOMContentLoaded", () => {
       openAuthModal("register");
     });
 
-  // Tabs Click Listeners inside Modal
+  // Attach tab switchers
   if (tabLogin) tabLogin.addEventListener("click", () => switchTab("login"));
   if (tabRegister)
     tabRegister.addEventListener("click", () => switchTab("register"));
-
-  // Close Button Listener
   if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeAuthModal);
 
-  // Close Modal when clicking outside the card overlay
+  // Close modal when clicking on background overlay
   if (authModal) {
     authModal.addEventListener("click", (e) => {
-      if (e.target.classList.contains("modal-overlay")) {
-        closeAuthModal();
-      }
+      if (e.target.classList.contains("modal-overlay")) closeAuthModal();
     });
   }
 
-  // Escape Key Listener to close modal
   document.addEventListener("keydown", (e) => {
-    if (
-      e.key === "Escape" &&
-      authModal &&
-      authModal.classList.contains("show")
-    ) {
+    if (e.key === "Escape" && authModal && authModal.classList.contains("show"))
       closeAuthModal();
-    }
   });
 
   // ==========================================
-  // 4. FAQ ACCORDION LOGIC
+  // 4. FAQ ACCORDION LOGIC (BUG FIXED)
   // ==========================================
   const faqQuestions = document.querySelectorAll(".faq-question");
   faqQuestions.forEach((question) => {
-    link.addEventListener("click", () => {
+    // "link" variable was undefined here, fixed it by using "question" directly
+    question.addEventListener("click", () => {
       const answer = question.nextElementSibling;
       const icon = question.querySelector("i");
 
-      // Toggle current answer
       if (answer.style.display === "block") {
         answer.style.display = "none";
         if (icon) icon.style.transform = "rotate(0deg)";
@@ -183,5 +163,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  console.log("Homepage loaded successfully! 🚀");
+  console.log("Homepage & Modals loaded successfully! 🚀");
 });

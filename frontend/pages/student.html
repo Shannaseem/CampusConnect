@@ -1,144 +1,239 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student Dashboard - CampusConnect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
-</head>
-<body>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/dashboard.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
     <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h2 class="text-gradient">CampusConnect</h2>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item active" id="nav-dashboard">Dashboard</a>
-                <a href="#" class="nav-item" id="nav-subjects">My Subjects</a>
-                <a href="#" class="nav-item" id="nav-assignments">Assignments</a>
-                <a href="#" class="nav-item" id="nav-profile">Profile</a>
-            </nav>
-            <div class="sidebar-footer">
-                <button id="logout-btn" class="btn btn-secondary btn-block">Logout</button>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="top-nav">
-                <div class="nav-left">
-                    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('show')">☰</button>
-                    <h3>Student Portal</h3>
-                </div>
-                <div class="nav-right">
-                    <button id="download-report-btn" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Download Report (PDF)</button>
-                    <div class="user-profile">
-                        <div class="user-info">
-                            <span class="user-name" id="user-name-display">Loading...</span>
-                            <span class="user-role">Student</span>
-                        </div>
-                        <div class="user-avatar" id="user-avatar-initial">S</div>
-                    </div>
-                </div>
-            </header>
-
-            <div class="content-area">
-                
-                <!-- Overview Section -->
-                <div class="card-header">
-                    <h3>Performance Overview</h3>
-                </div>
-                <div class="dashboard-grid">
-                    <div class="stat-card">
-                        <span class="stat-title">Overall Attendance</span>
-                        <span class="stat-value text-gradient" id="stat-attendance">--%</span>
-                        <div style="height: 4px; background: var(--bg-body); margin-top: 1rem; border-radius: 2px; overflow: hidden;">
-                            <div id="bar-attendance" style="width: 0%; height: 100%; background: var(--primary-color);"></div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-title">Enrolled Subjects</span>
-                        <span class="stat-value" id="stat-subjects">--</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-title">Assignments Due</span>
-                        <span class="stat-value text-gradient" id="stat-assignments-due" style="color: var(--warning-color);">--</span>
-                    </div>
-                </div>
-
-                <!-- Subjects & Attendance Table -->
-                <div class="card-header mt-4">
-                    <h3>Subject Analytics</h3>
-                </div>
-                <div class="table-container mb-4">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Subject</th>
-                                <th>Attendance Count</th>
-                                <th>Assignments Given</th>
-                                <th>Marks Obtained</th>
-                            </tr>
-                        </thead>
-                        <tbody id="subject-analytics-body">
-                            <tr><td colspan="4">Loading data...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pending Assignments -->
-                <div class="card-header mt-4">
-                    <h3>Action Required: Assignments</h3>
-                </div>
-                <div class="dashboard-grid" id="assignments-list">
-                    <!-- Populated by JS -->
-                </div>
-
-                <!-- Update Profile Section -->
-                <div class="card-header mt-4">
-                    <h3>Profile Settings</h3>
-                </div>
-                <div class="stat-card" style="max-width: 500px;">
-                    <form id="profile-form">
-                        <div class="form-group">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" id="profile-name" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Department</label>
-                            <input type="text" id="profile-department" class="form-control" placeholder="e.g. Software Engineering">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
-                </div>
-
-            </div>
-        </main>
-    </div>
-
-    <!-- New Assignment Popup Modal -->
-    <div class="modal-overlay" id="assignment-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 style="color: white; font-family: 'Outfit';">New Assignment Available!</h3>
-                <button class="modal-close" onclick="closeModal()">×</button>
-            </div>
-            <div id="modal-body">
-                <p style="color: var(--text-main); margin-bottom: 1.5rem;">A new assignment has been posted in one of your subjects. Check your assignments tab.</p>
-                <button class="btn btn-primary btn-block" onclick="closeModal()">Got it</button>
-            </div>
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="brand-info">
+            <i class="fas fa-graduation-cap"></i>
+            <span class="brand-text">CampusConnect</span>
+          </div>
+          <button id="sidebar-toggle" class="sidebar-toggle-btn">
+            <i class="fas fa-bars"></i>
+          </button>
         </div>
+        <nav class="sidebar-nav">
+          <a
+            href="#"
+            class="nav-item active"
+            onclick="switchStudentTab('overview', this)"
+            ><i class="fas fa-chart-line"></i> <span>My Progress</span></a
+          >
+          <a
+            href="#"
+            class="nav-item"
+            onclick="switchStudentTab('assignments', this)"
+            ><i class="fas fa-tasks"></i> <span>Assignments</span></a
+          >
+          <a
+            href="#"
+            class="nav-item"
+            onclick="switchStudentTab('profile', this)"
+            ><i class="fas fa-user-cog"></i> <span>Profile</span></a
+          >
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <header class="top-nav">
+          <div
+            class="nav-left"
+            style="display: flex; align-items: center; gap: 15px"
+          >
+            <button
+              class="menu-toggle"
+              id="mobile-menu-btn"
+              onclick="
+                document
+                  .getElementById('sidebar')
+                  .classList.toggle('mobile-open');
+                document
+                  .querySelector('.sidebar-overlay')
+                  .classList.toggle('show');
+              "
+              style="
+                display: none;
+                background: transparent;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--dark-color);
+              "
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h3 id="panel-title" style="margin: 0">My Progress</h3>
+          </div>
+          <div class="nav-right">
+            <button id="download-report-btn" class="btn btn-primary btn-sm">
+              <i class="fas fa-download"></i> PDF Report
+            </button>
+            <button id="logout-btn" class="btn-logout">
+              <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </button>
+            <div class="user-profile">
+              <div class="user-info">
+                <span class="user-name" id="user-name-display">Loading...</span>
+                <span class="user-role" id="user-role-display">STUDENT</span>
+              </div>
+              <div class="user-avatar" id="user-avatar-initial">S</div>
+            </div>
+          </div>
+        </header>
+
+        <div class="content-area">
+          <div id="tab-overview" class="tab-content active">
+            <div class="dashboard-grid">
+              <div
+                class="stat-card"
+                style="border-top: 4px solid var(--primary-color)"
+              >
+                <span class="stat-title">Overall Attendance</span>
+                <span class="stat-value" id="stat-attendance">0%</span>
+                <div
+                  style="
+                    height: 6px;
+                    background: #e2e8f0;
+                    margin-top: 1rem;
+                    border-radius: 4px;
+                    overflow: hidden;
+                  "
+                >
+                  <div
+                    id="bar-attendance"
+                    style="
+                      width: 0%;
+                      height: 100%;
+                      background: var(--primary-color);
+                      transition: width 0.5s ease;
+                    "
+                  ></div>
+                </div>
+              </div>
+              <div class="stat-card" style="border-top: 4px solid #10b981">
+                <span class="stat-title">Enrolled Subjects</span>
+                <span class="stat-value" id="stat-subjects">0</span>
+              </div>
+              <div
+                class="stat-card"
+                style="border-top: 4px solid var(--warning-color)"
+              >
+                <span class="stat-title">Pending Assignments</span>
+                <span class="stat-value" id="stat-assignments-due">0</span>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px">
+              <h3><i class="fas fa-book"></i> Subject Analytics</h3>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Subject</th>
+                      <th>Attendance</th>
+                      <th>Assignments Given</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="subject-analytics-body">
+                    <tr>
+                      <td colspan="4" style="text-align: center">
+                        Loading data...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="tab-assignments" class="tab-content">
+            <div class="card">
+              <h3><i class="fas fa-tasks"></i> My Assignments</h3>
+              <div class="dashboard-grid" id="assignments-list">
+                <p style="color: var(--gray-color); grid-column: 1 / -1">
+                  No pending assignments.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div id="tab-profile" class="tab-content">
+            <div class="card" style="max-width: 600px">
+              <h3><i class="fas fa-user-edit"></i> Edit Profile Details</h3>
+              <form id="profile-form">
+                <div class="admin-form-group" style="margin-bottom: 15px">
+                  <label>Full Name</label>
+                  <input
+                    type="text"
+                    id="profile-name"
+                    class="admin-form-control"
+                    required
+                  />
+                </div>
+                <div class="admin-form-group" style="margin-bottom: 15px">
+                  <label>Department / Major</label>
+                  <input
+                    type="text"
+                    id="profile-department"
+                    class="admin-form-control"
+                    placeholder="e.g. Computer Science"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  style="margin-top: 10px"
+                >
+                  Update Profile
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
-    <!-- jsPDF library for PDF Download -->
+    <div
+      class="auth-modal"
+      id="assignment-modal"
+      style="display: none; z-index: 9999"
+    >
+      <div class="modal-overlay" onclick="closeModal()"></div>
+      <div class="modal-content custom-popup-card">
+        <h3 style="color: black; margin-bottom: 10px">Notification</h3>
+        <p style="color: #64748b; margin-bottom: 20px">
+          Please check your dashboard.
+        </p>
+        <button
+          class="btn btn-primary btn-block"
+          onclick="
+            document.getElementById('assignment-modal').style.display = 'none'
+          "
+        >
+          Acknowledge
+        </button>
+      </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/dashboard.js"></script>
     <script src="../assets/js/student.js"></script>
-</body>
+  </body>
 </html>

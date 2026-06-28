@@ -28,7 +28,6 @@ body {
   width: 100%;
 }
 
-/* SIDEBAR (Gemini Style) */
 .sidebar {
   width: var(--sidebar-width);
   background: var(--bg-surface);
@@ -136,7 +135,6 @@ body {
   display: none;
 }
 
-/* MAIN CONTENT */
 .main-content {
   flex: 1;
   margin-left: var(--sidebar-width);
@@ -176,7 +174,6 @@ body {
   gap: 15px;
 }
 
-/* USER PROFILE & LOGOUT */
 .btn-logout {
   background: transparent;
   border: 1px solid var(--border-color);
@@ -237,7 +234,6 @@ body {
   font-size: 16px;
 }
 
-/* CONTENT AREA */
 .content-area {
   padding: 24px;
   overflow-x: hidden;
@@ -249,6 +245,7 @@ body {
 .tab-content.active {
   display: block;
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -288,7 +285,6 @@ body {
   color: var(--dark-color);
 }
 
-/* CARDS AND TABLES */
 .card {
   background: var(--bg-surface);
   border-radius: 12px;
@@ -309,7 +305,6 @@ body {
   gap: 8px;
 }
 
-/* Table Wrapper for Horizontal Scroll on Mobile */
 .table-container {
   width: 100%;
   overflow-x: auto;
@@ -318,7 +313,7 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 700px; /* Forces scroll on small screens */
+  min-width: 700px;
 }
 th,
 td {
@@ -357,7 +352,6 @@ tr:hover td {
   border: 1px solid var(--border-color);
 }
 
-/* FORMS */
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -387,7 +381,6 @@ tr:hover td {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* BUTTONS */
 .flex-actions {
   display: flex;
   gap: 6px;
@@ -437,7 +430,6 @@ tr:hover td {
   background: #059669;
 }
 
-/* ============ BEAUTIFUL SPACIOUS MODAL POPUP ============ */
 .auth-modal {
   position: fixed;
   top: 0;
@@ -500,10 +492,7 @@ tr:hover td {
   font-size: 0.95rem;
 }
 
-/* =========================================================
-   100% BULLETPROOF RESPONSIVENESS (Mobile & Tablet)
-========================================================= */
-
+/* Mobile Menu Fix */
 @media screen and (max-width: 1024px) {
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -514,7 +503,9 @@ tr:hover td {
 }
 
 @media screen and (max-width: 768px) {
-  /* Hide Sidebar off-screen by default */
+  #mobile-menu-btn {
+    display: block !important;
+  }
   .sidebar {
     transform: translateX(-100%);
     width: 260px !important;
@@ -539,8 +530,6 @@ tr:hover td {
     padding: 12px 24px;
     justify-content: flex-start;
   }
-
-  /* Make Main Content take full width */
   .main-content {
     margin-left: 0 !important;
     width: 100% !important;
@@ -549,16 +538,12 @@ tr:hover td {
     margin-left: 0;
     width: 100%;
   }
-
-  /* Simplify Top Nav */
   .nav-right .user-info {
     display: none;
   }
   .btn-logout span {
     display: none;
   }
-
-  /* Stack Grids */
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
@@ -591,7 +576,6 @@ tr:hover td {
   }
 }
 
-/* Sidebar Overlay for Mobile to dim background */
 .sidebar-overlay {
   position: fixed;
   top: 0;

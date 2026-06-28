@@ -53,8 +53,33 @@
 
       <main class="main-content">
         <header class="top-nav">
-          <div class="nav-left">
-            <h3 id="panel-title">Overview</h3>
+          <div
+            class="nav-left"
+            style="display: flex; align-items: center; gap: 15px"
+          >
+            <button
+              class="menu-toggle"
+              id="mobile-menu-btn"
+              onclick="
+                document
+                  .getElementById('sidebar')
+                  .classList.toggle('mobile-open');
+                document
+                  .querySelector('.sidebar-overlay')
+                  .classList.toggle('show');
+              "
+              style="
+                display: none;
+                background: transparent;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--dark-color);
+              "
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h3 id="panel-title" style="margin: 0">Overview</h3>
           </div>
           <div class="nav-right">
             <button id="logout-btn" class="btn-logout">

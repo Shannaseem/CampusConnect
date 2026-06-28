@@ -1,155 +1,223 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Teacher Dashboard - CampusConnect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
-</head>
-<body>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/dashboard.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
     <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h2 class="text-gradient">CampusConnect</h2>
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="brand-info">
+            <i class="fas fa-graduation-cap"></i>
+            <span class="brand-text">CampusConnect</span>
+          </div>
+          <button id="sidebar-toggle" class="sidebar-toggle-btn">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+        <nav class="sidebar-nav">
+          <a
+            href="#"
+            class="nav-item active"
+            onclick="switchTeacherTab('operations', this)"
+            ><i class="fas fa-briefcase"></i> <span>Operations</span></a
+          >
+          <a
+            href="#"
+            class="nav-item"
+            onclick="switchTeacherTab('mysubjects', this)"
+            ><i class="fas fa-book-open"></i> <span>My Subjects</span></a
+          >
+          <a
+            href="#"
+            class="nav-item"
+            onclick="switchTeacherTab('submissions', this)"
+            ><i class="fas fa-inbox"></i> <span>Submissions</span></a
+          >
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <header class="top-nav">
+          <div
+            class="nav-left"
+            style="display: flex; align-items: center; gap: 15px"
+          >
+            <button
+              class="menu-toggle"
+              id="mobile-menu-btn"
+              onclick="
+                document
+                  .getElementById('sidebar')
+                  .classList.toggle('mobile-open');
+                document
+                  .querySelector('.sidebar-overlay')
+                  .classList.toggle('show');
+              "
+              style="
+                display: none;
+                background: transparent;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--dark-color);
+              "
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h3 id="panel-title" style="margin: 0">Daily Operations</h3>
+          </div>
+          <div class="nav-right">
+            <button id="logout-btn" class="btn-logout">
+              <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </button>
+            <div class="user-profile">
+              <div class="user-info">
+                <span class="user-name" id="user-name-display">Loading...</span>
+                <span class="user-role" id="user-role-display">TEACHER</span>
+              </div>
+              <div class="user-avatar" id="user-avatar-initial">T</div>
             </div>
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item active" id="nav-dashboard">Dashboard</a>
-                <a href="#" class="nav-item" id="nav-subjects">My Subjects</a>
-                <a href="#" class="nav-item" id="nav-assignments">Assignments</a>
-                <a href="#" class="nav-item" id="nav-profile">Profile Settings</a>
-            </nav>
-            <div class="sidebar-footer">
-                <button id="logout-btn" class="btn btn-secondary btn-block">Logout</button>
+          </div>
+        </header>
+
+        <div class="content-area">
+          <div id="tab-operations" class="tab-content active">
+            <div class="dashboard-grid">
+              <div class="card">
+                <h3><i class="fas fa-file-upload"></i> Post Assignment</h3>
+                <form id="assignment-form">
+                  <div class="admin-form-group" style="margin-bottom: 12px">
+                    <label>Select Subject</label>
+                    <select
+                      id="assign-subject"
+                      class="admin-form-control"
+                      required
+                    >
+                      <option value="">Loading...</option>
+                    </select>
+                  </div>
+                  <div class="admin-form-group" style="margin-bottom: 12px">
+                    <label>Title</label>
+                    <input
+                      type="text"
+                      id="assign-title"
+                      class="admin-form-control"
+                      required
+                    />
+                  </div>
+                  <div class="admin-form-group" style="margin-bottom: 12px">
+                    <label>Deadline</label>
+                    <input
+                      type="datetime-local"
+                      id="assign-deadline"
+                      class="admin-form-control"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    style="width: 100%"
+                  >
+                    Publish Assignment
+                  </button>
+                </form>
+              </div>
+
+              <div class="card">
+                <h3><i class="fas fa-clipboard-check"></i> Mark Attendance</h3>
+                <form id="attendance-form">
+                  <div class="admin-form-group" style="margin-bottom: 12px">
+                    <label>Subject</label>
+                    <select
+                      id="att-subject"
+                      class="admin-form-control"
+                      required
+                    >
+                      <option value="">Loading...</option>
+                    </select>
+                  </div>
+                  <div class="admin-form-group" style="margin-bottom: 12px">
+                    <label>Student ID/Email</label>
+                    <input
+                      type="text"
+                      id="att-student-email"
+                      class="admin-form-control"
+                      placeholder="Student Email or ID"
+                      required
+                    />
+                  </div>
+                  <div class="admin-form-group" style="margin-bottom: 12px">
+                    <label>Status</label>
+                    <select id="att-status" class="admin-form-control" required>
+                      <option value="present">Present</option>
+                      <option value="absent">Absent</option>
+                      <option value="late">Late</option>
+                    </select>
+                  </div>
+                  <button
+                    type="submit"
+                    class="btn btn-success"
+                    style="width: 100%"
+                  >
+                    Save Attendance
+                  </button>
+                </form>
+              </div>
             </div>
-        </aside>
+          </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="top-nav">
-                <div class="nav-left">
-                    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('show')">☰</button>
-                    <h3>Teacher Portal</h3>
-                </div>
-                <div class="nav-right">
-                    <div class="user-profile">
-                        <div class="user-info">
-                            <span class="user-name" id="user-name-display">Loading...</span>
-                            <span class="user-role">Teacher</span>
-                        </div>
-                        <div class="user-avatar" id="user-avatar-initial">T</div>
-                    </div>
-                </div>
-            </header>
-
-            <div class="content-area">
-                
-                <!-- Create Subject Section -->
-                <div class="card-header">
-                    <h3>Quick Actions</h3>
-                </div>
-                <div class="dashboard-grid">
-                    <div class="stat-card">
-                        <h4 style="margin-bottom: 1rem; color: white;">Create Subject</h4>
-                        <form id="create-subject-form">
-                            <div class="form-group">
-                                <label class="form-label">Subject Title</label>
-                                <input type="text" id="subj-title" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Description</label>
-                                <textarea id="subj-desc" class="form-control" rows="2" required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Create Subject</button>
-                        </form>
-                    </div>
-
-                    <div class="stat-card">
-                        <h4 style="margin-bottom: 1rem; color: white;">Create Assignment</h4>
-                        <form id="assignment-form">
-                            <div class="form-group">
-                                <label class="form-label">Select Subject</label>
-                                <select id="assign-subject" class="form-control" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Assignment Title</label>
-                                <input type="text" id="assign-title" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Description</label>
-                                <textarea id="assign-desc" class="form-control" rows="2" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Deadline</label>
-                                <input type="datetime-local" id="assign-deadline" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Attach File (Optional)</label>
-                                <input type="file" id="assign-file" class="form-control">
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Post Assignment</button>
-                        </form>
-                    </div>
-
-                    <div class="stat-card">
-                        <h4 style="margin-bottom: 1rem; color: white;">Mark Attendance</h4>
-                        <form id="attendance-form">
-                            <div class="form-group">
-                                <label class="form-label">Select Subject</label>
-                                <select id="att-subject" class="form-control" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Select Student</label>
-                                <select id="student-select" class="form-control" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Status</label>
-                                <select id="attendance-status" class="form-control" required>
-                                    <option value="present">Present</option>
-                                    <option value="absent">Absent</option>
-                                    <option value="late">Late</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Mark Attendance</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Subjects Cards -->
-                <div class="card-header mt-4">
-                    <h3>My Subjects</h3>
-                </div>
-                <div class="dashboard-grid" id="subjects-container">
-                    <!-- Dynamic subjects will be injected here -->
-                </div>
-
-                <!-- Update Profile Section (Hidden by default or lower down) -->
-                <div class="card-header mt-4">
-                    <h3>Profile Settings</h3>
-                </div>
-                <div class="stat-card" style="max-width: 500px;">
-                    <form id="profile-form">
-                        <div class="form-group">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" id="profile-name" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Department</label>
-                            <input type="text" id="profile-department" class="form-control" placeholder="e.g. Computer Science">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
-                </div>
-
+          <div id="tab-mysubjects" class="tab-content">
+            <div class="card">
+              <h3><i class="fas fa-book-open"></i> Assigned Subjects</h3>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Subject Code</th>
+                      <th>Title</th>
+                      <th>Total Students</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="teacher-subjects-body">
+                    <tr>
+                      <td colspan="4" style="text-align: center">
+                        Loading subjects...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-        </main>
+          </div>
+
+          <div id="tab-submissions" class="tab-content">
+            <div class="card">
+              <h3><i class="fas fa-inbox"></i> Student Submissions</h3>
+              <p style="color: var(--gray-color)">
+                Select an assignment from your subjects to view submissions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
-    <!-- Modals and Scripts -->
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/dashboard.js"></script>
     <script src="../assets/js/teacher.js"></script>
-</body>
+  </body>
 </html>

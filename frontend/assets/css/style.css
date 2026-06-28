@@ -1,40 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap");
 
 :root {
-  /* High-End SaaS Theme */
-  --bg-dark: #05050a; 
+  --bg-dark: #05050a;
   --bg-surface: #0a0a14;
   --bg-glass: rgba(15, 15, 25, 0.4);
-  
-  --primary-color: #6366f1; /* Indigo */
+
+  --primary-color: #6366f1;
   --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
   --primary-hover: #4f46e5;
   --primary-glow: rgba(99, 102, 241, 0.3);
-  
+
   --secondary-color: #f8fafc;
-  
   --text-main: #cbd5e1;
   --text-muted: #64748b;
   --text-heading: #ffffff;
-  
+
   --success-color: #10b981;
   --danger-color: #ef4444;
   --warning-color: #f59e0b;
-  
+
   --border-color: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(99, 102, 241, 0.4);
-  
   --input-bg: rgba(15, 15, 25, 0.6);
-  
+
   --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 24px;
   --radius-pill: 9999px;
-  
+
   --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 20px var(--primary-glow);
-  
+
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -45,16 +42,16 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-main);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  width: 100%;
   overflow-x: hidden;
 }
 
-/* Background animated gradient */
 .bg-glow {
   position: fixed;
   top: 0;
@@ -62,14 +59,27 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  background: 
-    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08), transparent 35%),
-    radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.08), transparent 35%);
+  background:
+    radial-gradient(
+      circle at 15% 50%,
+      rgba(99, 102, 241, 0.08),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 30%,
+      rgba(236, 72, 153, 0.08),
+      transparent 35%
+    );
   pointer-events: none;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Outfit', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Outfit", sans-serif;
   font-weight: 700;
   color: var(--text-heading);
   letter-spacing: -0.03em;
@@ -101,19 +111,21 @@ a:hover {
   box-shadow: var(--shadow-md);
 }
 
-/* Buttons */
+/* Responsive Custom Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0.8rem 1.75rem;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-weight: 600;
   border-radius: var(--radius-pill);
   border: none;
   cursor: pointer;
   transition: var(--transition);
   font-size: 1rem;
+  width: auto;
+  white-space: nowrap;
 }
 
 .btn-primary {
@@ -138,14 +150,20 @@ a:hover {
   transform: translateY(-2px);
 }
 
-/* Input Fields */
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+/* Core Responsive Form Control Elements */
 .form-group {
   margin-bottom: 1.5rem;
+  width: 100%;
 }
 
 .form-label {
   display: block;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 0.9rem;
   color: var(--text-muted);
   margin-bottom: 0.5rem;
@@ -158,9 +176,10 @@ a:hover {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: white;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 1rem;
   transition: var(--transition);
+  box-sizing: border-color-box;
 }
 
 .form-control:focus {
@@ -171,14 +190,34 @@ a:hover {
 
 /* Animations */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
   animation: fadeInUp 0.6s ease forwards;
 }
 
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+/* Global Utilities for Layout Breakdown */
+@media screen and (max-width: 480px) {
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}

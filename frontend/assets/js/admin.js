@@ -14,88 +14,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   const createSubjectForm = document.getElementById("create-subject-form");
 
   let allTeachers = [];
-  let lastPendingCount = -1; // Tracks pending requests to prevent UI flickering
+  let lastPendingCount = -1;
 
-  // ==========================================
-  // SIDEBAR TOGGLE LOGIC (Gemini Style + Mobile Fix)
-  // ==========================================
+  // Mobile Sidebar Setup
   const sidebar = document.getElementById("sidebar");
   const sidebarToggle = document.getElementById("sidebar-toggle");
 
-  // Create overlay for mobile
-  const sidebarOverlay = document.createElement("div");
-  sidebarOverlay.className = "sidebar-overlay";
-  document.body.appendChild(sidebarOverlay);
+  if (sidebar && !document.querySelector(".sidebar-overlay")) {
+    const sidebarOverlay = document.createElement("div");
+    sidebarOverlay.className = "sidebar-overlay";
+    document.body.appendChild(sidebarOverlay);
 
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener("click", () => {
-      if (window.innerWidth <= 768) {
-        sidebar.classList.toggle("mobile-open");
-        sidebarOverlay.classList.toggle("show");
-      } else {
-        sidebar.classList.toggle("collapsed");
-      }
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener("click", () => {
+        if (window.innerWidth <= 768) {
+          sidebar.classList.toggle("mobile-open");
+          sidebarOverlay.classList.toggle("show");
+        } else {
+          sidebar.classList.toggle("collapsed");
+        }
+      });
+    }
+    sidebarOverlay.addEventListener("click", () => {
+      sidebar.classList.remove("mobile-open");
+      sidebarOverlay.classList.remove("show");
     });
   }
 
-  // Close sidebar when clicking outside on mobile
-  sidebarOverlay.addEventListener("click", () => {
-    sidebar.classList.remove("mobile-open");
-    sidebarOverlay.classList.remove("show");
-  });
-
-  // ==========================================
-  // CUSTOM VISUAL MODAL ENGINE (SaaS Style)
-  // ==========================================
-  const modalEl = document.getElementById("custom-alert-modal");
-  const modalTitle = document.getElementById("custom-modal-title");
-  const modalMsg = document.getElementById("custom-modal-message");
-  const modalIcon = document.getElementById("custom-modal-icon");
-  const modalActions = document.getElementById("custom-modal-actions");
-
-  window.showCustomAlert = function (
-    title,
-    message,
-    iconClass = "fas fa-check-circle",
-    iconColor = "var(--primary-color)",
-  ) {
-    modalTitle.textContent = title;
-    modalMsg.textContent = message;
-    modalIcon.innerHTML = `<i class="${iconClass}"></i>`;
-    modalIcon.style.color = iconColor;
-    modalActions.innerHTML = `<button class="btn btn-primary" onclick="closeCustomModal()">Okay, got it</button>`;
-    modalEl.style.display = "flex";
-  };
-
-  window.showCustomConfirm = function (
-    title,
-    message,
-    iconClass,
-    iconColor,
-    onConfirm,
-  ) {
-    modalTitle.textContent = title;
-    modalMsg.textContent = message;
-    modalIcon.innerHTML = `<i class="${iconClass}"></i>`;
-    modalIcon.style.color = iconColor;
-    modalActions.innerHTML = `
-            <button class="btn btn-outline" onclick="closeCustomModal()" style="border-color: var(--border-color); color: var(--gray-color);">Cancel</button>
-            <button class="btn btn-primary" id="custom-modal-confirm-btn" style="background: ${iconColor}; border-color: ${iconColor};">Confirm Action</button>
-        `;
-    modalEl.style.display = "flex";
-    document.getElementById("custom-modal-confirm-btn").onclick = function () {
-      closeCustomModal();
-      onConfirm();
+  // Fallback if modals aren't loaded somehow
+  if (!window.showCustomAlert) {
+    window.showCustomAlert = (t, m) => alert(t + ": " + m);
+  }
+  if (!window.showCustomConfirm) {
+    window.showCustomConfirm = (t, m, c, clr, cb) => {
+      if (confirm(t + "\n" + m)) cb();
     };
-  };
+  }
 
-  window.closeCustomModal = function () {
-    modalEl.style.display = "none";
-  };
+  // Safe String Escaper for HTML Attributes
+  function escapeQuotes(str) {
+    return str.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+  }
 
-  // ==========================================
-  // TAB SWITCHING
-  // ==========================================
   window.switchAdminTab = function (tabName, element) {
     document
       .querySelectorAll(".tab-content")
@@ -103,7 +63,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     document
       .querySelectorAll(".nav-item")
       .forEach((item) => item.classList.remove("active"));
-
     document.getElementById(`tab-${tabName}`).classList.add("active");
     if (element) element.classList.add("active");
 
@@ -116,16 +75,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("panel-title").textContent =
       titleMap[tabName] || "Overview";
 
-    // Auto-close sidebar and overlay on mobile after clicking a tab
     if (window.innerWidth <= 768 && sidebar) {
       sidebar.classList.remove("mobile-open");
-      sidebarOverlay.classList.remove("show");
+      document.querySelector(".sidebar-overlay").classList.remove("show");
     }
   };
 
-  // ==========================================
-  // DATA LOADING FUNCTIONS
-  // ==========================================
   async function loadUsers() {
     if (!usersTableBody) return;
     try {
@@ -149,26 +104,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       approvedUsers.forEach((user) => {
+        const safeName = escapeQuotes(user.name);
         const tr = document.createElement("tr");
         tr.innerHTML = `
-                    <td style="color: var(--gray-color);">#${user.id}</td>
-                    <td style="font-weight: 600;">${user.name}</td>
-                    <td style="color: var(--gray-color);">${user.email}</td>
-                    <td><span class="badge role">${user.role}</span></td>
-                    <td><button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id}, '${user.name}')"><i class="fas fa-trash"></i> Delete</button></td>
-                `;
+            <td style="color: var(--gray-color);">#${user.id}</td>
+            <td style="font-weight: 600;">${user.name}</td>
+            <td style="color: var(--gray-color);">${user.email}</td>
+            <td><span class="badge role">${user.role}</span></td>
+            <td><button class="btn btn-sm btn-danger" onclick="window.deleteUser(${user.id}, '${safeName}')"><i class="fas fa-trash"></i> Delete</button></td>
+        `;
         usersTableBody.appendChild(tr);
       });
     } catch (err) {
-      console.error(err);
+      console.error("Error loading users:", err);
     }
   }
 
   async function loadPendingUsers(isSilent = false) {
     try {
       const pendingUsers = await api.get("/users/pending");
-
-      // Prevent UI flicker: only re-render if count has changed
       if (isSilent && pendingUsers.length === lastPendingCount) return;
       lastPendingCount = pendingUsers.length;
 
@@ -188,44 +142,41 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       pendingUsers.forEach((user) => {
-        // Populate Main Pending Table
+        const safeName = escapeQuotes(user.name);
         if (pendingTableBody) {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-                        <td style="color: var(--gray-color);">#${user.id}</td>
-                        <td style="font-weight: 600;">${user.name}</td>
-                        <td style="color: var(--gray-color);">${user.email}</td>
-                        <td><span class="badge role">${user.role}</span></td>
-                        <td><span class="badge pending">Pending</span></td>
-                        <td class="flex-actions">
-                            <button class="btn btn-sm btn-success" onclick="approveUser(${user.id}, '${user.name}')">Approve</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id}, '${user.name}')">Reject</button>
-                        </td>
-                    `;
+              <td style="color: var(--gray-color);">#${user.id}</td>
+              <td style="font-weight: 600;">${user.name}</td>
+              <td style="color: var(--gray-color);">${user.email}</td>
+              <td><span class="badge role">${user.role}</span></td>
+              <td><span class="badge pending">Pending</span></td>
+              <td class="flex-actions">
+                  <button class="btn btn-sm btn-success" onclick="window.approveUser(${user.id}, '${safeName}')">Approve</button>
+                  <button class="btn btn-sm btn-danger" onclick="window.deleteUser(${user.id}, '${safeName}')">Reject</button>
+              </td>
+          `;
           pendingTableBody.appendChild(tr);
         }
-
-        // Populate Mini Table on Overview (with Button Text)
         if (overviewPendingBody) {
           const trMini = document.createElement("tr");
           trMini.innerHTML = `
-                        <td style="font-weight: 600;">${user.name}</td>
-                        <td style="color: var(--gray-color);">${user.email}</td>
-                        <td><span class="badge role">${user.role}</span></td>
-                        <td class="flex-actions">
-                            <button class="btn btn-sm btn-success" onclick="approveUser(${user.id}, '${user.name}')" style="padding: 6px 12px;"><i class="fas fa-check"></i> Approve</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id}, '${user.name}')" style="padding: 6px 12px;"><i class="fas fa-times"></i> Reject</button>
-                        </td>
-                    `;
+              <td style="font-weight: 600;">${user.name}</td>
+              <td style="color: var(--gray-color);">${user.email}</td>
+              <td><span class="badge role">${user.role}</span></td>
+              <td class="flex-actions">
+                  <button class="btn btn-sm btn-success" onclick="window.approveUser(${user.id}, '${safeName}')" style="padding: 6px 12px;"><i class="fas fa-check"></i> Approve</button>
+                  <button class="btn btn-sm btn-danger" onclick="window.deleteUser(${user.id}, '${safeName}')" style="padding: 6px 12px;"><i class="fas fa-times"></i> Reject</button>
+              </td>
+          `;
           overviewPendingBody.appendChild(trMini);
         }
       });
     } catch (err) {
-      console.error(err);
+      console.error("Error loading pending users:", err);
     }
   }
 
-  // Auto-Refresh pending users every 5 seconds invisibly
   setInterval(() => {
     loadPendingUsers(true);
   }, 5000);
@@ -255,28 +206,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       subjects.forEach((subj) => {
+        const safeTitle = escapeQuotes(subj.title);
         const tr = document.createElement("tr");
         let optionsHtml = `<option value="0">Unassigned</option>`;
         allTeachers.forEach((t) => {
           optionsHtml += `<option value="${t.id}" ${subj.teacher_id === t.id ? "selected" : ""}>${t.name}</option>`;
         });
         tr.innerHTML = `
-                    <td style="font-weight: 700; color: var(--primary-color);">${subj.code || "-"}</td>
-                    <td style="font-weight: 600;">${subj.title}</td>
-                    <td style="color: var(--gray-color);">${subj.department || "N/A"}</td>
-                    <td><select class="admin-form-control" style="padding: 6px; font-size: 13px;" onchange="assignTeacherToSubject(${subj.id}, this.value)">${optionsHtml}</select></td>
-                    <td><button class="btn btn-sm btn-danger" onclick="deleteSubject(${subj.id}, '${subj.title}')"><i class="fas fa-trash"></i> Delete</button></td>
-                `;
+            <td style="font-weight: 700; color: var(--primary-color);">${subj.code || "-"}</td>
+            <td style="font-weight: 600;">${subj.title}</td>
+            <td style="color: var(--gray-color);">${subj.department || "N/A"}</td>
+            <td><select class="admin-form-control" style="padding: 6px; font-size: 13px;" onchange="window.assignTeacherToSubject(${subj.id}, this.value)">${optionsHtml}</select></td>
+            <td><button class="btn btn-sm btn-danger" onclick="window.deleteSubject(${subj.id}, '${safeTitle}')"><i class="fas fa-trash"></i> Delete</button></td>
+        `;
         subjectsTableBody.appendChild(tr);
       });
     } catch (err) {
-      console.error(err);
+      console.error("Error loading subjects:", err);
     }
   }
 
-  // ==========================================
-  // FORM & ACTION HANDLERS
-  // ==========================================
   if (createSubjectForm) {
     createSubjectForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -290,7 +239,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
       try {
         await api.post("/subjects/", payload);
-        showCustomAlert(
+        window.showCustomAlert(
           "Success",
           "Subject created successfully!",
           "fas fa-check-circle",
@@ -299,7 +248,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         createSubjectForm.reset();
         loadSubjects();
       } catch (err) {
-        showCustomAlert(
+        window.showCustomAlert(
           "Error",
           err.message,
           "fas fa-exclamation-triangle",
@@ -309,19 +258,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // ==========================================
+  // API ACTION FUNCTIONS (Global Windows Scope)
+  // ==========================================
   window.assignTeacherToSubject = async function (subjectId, teacherId) {
     try {
       const token =
         localStorage.getItem("token") || localStorage.getItem("access_token");
-      await fetch(`http://localhost:8000/api/subjects/${subjectId}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `http://localhost:8000/api/subjects/${subjectId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ teacher_id: parseInt(teacherId) }),
         },
-        body: JSON.stringify({ teacher_id: parseInt(teacherId) }),
-      });
-      showCustomAlert(
+      );
+      if (!response.ok) throw new Error("Assignment failed on server.");
+
+      window.showCustomAlert(
         "Assigned",
         "Teacher assignment updated!",
         "fas fa-user-check",
@@ -329,7 +286,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       );
       loadSubjects();
     } catch (err) {
-      showCustomAlert(
+      window.showCustomAlert(
         "Error",
         err.message,
         "fas fa-exclamation-triangle",
@@ -339,7 +296,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   window.deleteSubject = async function (id, name) {
-    showCustomConfirm(
+    window.showCustomConfirm(
       "Delete Subject",
       `Are you sure you want to delete "${name}"?`,
       "fas fa-trash",
@@ -349,11 +306,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           const token =
             localStorage.getItem("token") ||
             localStorage.getItem("access_token");
-          await fetch(`http://localhost:8000/api/subjects/${id}`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          showCustomAlert(
+          const response = await fetch(
+            `http://localhost:8000/api/subjects/${id}`,
+            { method: "DELETE", headers: { Authorization: `Bearer ${token}` } },
+          );
+          if (!response.ok)
+            throw new Error("Failed to delete subject from server.");
+
+          window.showCustomAlert(
             "Deleted",
             "Subject removed successfully.",
             "fas fa-check-circle",
@@ -361,7 +321,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           );
           loadSubjects();
         } catch (err) {
-          showCustomAlert(
+          window.showCustomAlert(
             "Error",
             err.message,
             "fas fa-exclamation-triangle",
@@ -373,7 +333,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   window.approveUser = async function (id, name) {
-    showCustomConfirm(
+    window.showCustomConfirm(
       "Approve Account",
       `Approve the account for ${name}?`,
       "fas fa-user-check",
@@ -383,21 +343,23 @@ document.addEventListener("DOMContentLoaded", async () => {
           const token =
             localStorage.getItem("token") ||
             localStorage.getItem("access_token");
-          await fetch(`http://localhost:8000/api/users/${id}/approve`, {
-            method: "PUT",
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          showCustomAlert(
+          const response = await fetch(
+            `http://localhost:8000/api/users/${id}/approve`,
+            { method: "PUT", headers: { Authorization: `Bearer ${token}` } },
+          );
+          if (!response.ok) throw new Error("Failed to approve user.");
+
+          window.showCustomAlert(
             "Approved",
             `${name} is now an active user.`,
             "fas fa-check-circle",
             "#10b981",
           );
-          lastPendingCount = -1; // Force reload
+          lastPendingCount = -1;
           loadPendingUsers();
           loadUsers();
         } catch (err) {
-          showCustomAlert(
+          window.showCustomAlert(
             "Error",
             err.message,
             "fas fa-exclamation-triangle",
@@ -409,7 +371,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   window.deleteUser = async function (id, name) {
-    showCustomConfirm(
+    window.showCustomConfirm(
       "Reject / Delete",
       `Permanently remove the profile for ${name}?`,
       "fas fa-user-slash",
@@ -419,21 +381,23 @@ document.addEventListener("DOMContentLoaded", async () => {
           const token =
             localStorage.getItem("token") ||
             localStorage.getItem("access_token");
-          await fetch(`http://localhost:8000/api/users/${id}`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          showCustomAlert(
+          const response = await fetch(
+            `http://localhost:8000/api/users/${id}`,
+            { method: "DELETE", headers: { Authorization: `Bearer ${token}` } },
+          );
+          if (!response.ok) throw new Error("Failed to remove user profile.");
+
+          window.showCustomAlert(
             "Deleted",
             `User profile removed.`,
             "fas fa-check-circle",
             "#ef4444",
           );
-          lastPendingCount = -1; // Force reload
+          lastPendingCount = -1;
           loadUsers();
           loadPendingUsers();
         } catch (err) {
-          showCustomAlert(
+          window.showCustomAlert(
             "Error",
             err.message,
             "fas fa-exclamation-triangle",
@@ -444,7 +408,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
   };
 
-  // Initialize all data
   await loadUsers();
   await loadPendingUsers();
   await loadSubjects();
