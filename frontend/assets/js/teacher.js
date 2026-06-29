@@ -1,3 +1,4 @@
+// Tab Switching Engine
 window.switchTeacherTab = function (tabName, element) {
   document
     .querySelectorAll(".tab-content")
@@ -9,11 +10,7 @@ window.switchTeacherTab = function (tabName, element) {
   document.getElementById("tab-" + tabName).classList.add("active");
   if (element) element.classList.add("active");
 
-  const titles = {
-    operations: "Daily Operations",
-    mysubjects: "My Subjects",
-    submissions: "Submissions",
-  };
+  const titles = { operations: "Daily Operations", mysubjects: "My Subjects" };
   document.getElementById("panel-title").textContent =
     titles[tabName] || "Dashboard";
 
@@ -26,190 +23,202 @@ window.switchTeacherTab = function (tabName, element) {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
-  let teacherId = null;
-
-  try {
-    const user = await api.get("/users/me");
-    teacherId = user.id;
-
-    // Profile Initialization
-    document.getElementById("profile-name").value = user.name;
-    if (user.department)
-      document.getElementById("profile-department").value = user.department;
-
-    // Fetch and Render Subjects
-    await loadSubjects(teacherId);
-
-    // Fetch Students for Attendance
-    try {
-      // For now, load all students. In a real app, this would be filtered by the selected subject
-      const students = await api.get("/users/students");
-      const studentSelect = document.getElementById("student-select");
-      studentSelect.innerHTML = '<option value="">Select a student...</option>';
-      students.forEach((s) => {
-        studentSelect.innerHTML += `<option value="${s.id}">${s.name} (${s.email})</option>`;
-      });
-    } catch (e) {
-      console.error("Failed to load students", e);
-    }
-  } catch (err) {
-    console.error("Could not fetch user info in teacher.js", err);
+  const token =
+    localStorage.getItem("token") || localStorage.getItem("access_token");
+  if (!token) {
+    window.location.href = "index.html";
+    return;
   }
 
-  // Profile Form Submit
-  document
-    .getElementById("profile-form")
-    .addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("profile-name").value;
-      const dept = document.getElementById("profile-department").value;
-      try {
-        const updated = await api.put("/users/me", {
-          name: name,
-          department: dept,
-        });
-        alert("Profile updated successfully!");
-        document.getElementById("user-name-display").textContent = updated.name;
-      } catch (err) {
-        alert("Failed to update profile: " + err.message);
-      }
+  let currentUser = null;
+
+  // 1. Fetch Teacher Info & Populate Header
+  try {
+    const response = await fetch("http://localhost:8000/api/users/me", {
+      headers: { Authorization: `Bearer ${token}` },
     });
+    if (!response.ok) throw new Error("Not authenticated");
 
-  // Create Subject
-  document
-    .getElementById("create-subject-form")
-    .addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const title = document.getElementById("subj-title").value;
-      const desc = document.getElementById("subj-desc").value;
-      try {
-        await api.post("/subjects/", { title, description: desc });
-        alert("Subject created!");
-        document.getElementById("create-subject-form").reset();
-        await loadSubjects(teacherId); // reload list
-      } catch (err) {
-        alert("Error creating subject: " + err.message);
-      }
+    currentUser = await response.json();
+    const nameDisp = document.getElementById("user-name-display");
+    const avatarDisp = document.getElementById("user-avatar-initial");
+
+    if (nameDisp) nameDisp.textContent = currentUser.name;
+    if (avatarDisp)
+      avatarDisp.textContent = currentUser.name.charAt(0).toUpperCase();
+  } catch (e) {
+    console.error("Auth Error:", e);
+    localStorage.clear();
+    window.location.href = "index.html";
+    return;
+  }
+
+  // 2. Fetch Assigned Subjects
+  try {
+    const response = await fetch("http://localhost:8000/api/subjects/", {
+      headers: { Authorization: `Bearer ${token}` },
     });
+    const allSubjects = await response.json();
 
-  // Post Assignment
-  document
-    .getElementById("assignment-form")
-    .addEventListener("submit", async (e) => {
+    // Filter subjects assigned to this specific teacher
+    const teacherSubjects = allSubjects.filter(
+      (s) => s.teacher_id === currentUser.id,
+    );
+
+    const subjectBody = document.getElementById("teacher-subjects-body");
+    const assignSelect = document.getElementById("assign-subject");
+    const attSelect = document.getElementById("att-subject");
+
+    if (subjectBody) subjectBody.innerHTML = "";
+    if (assignSelect)
+      assignSelect.innerHTML = '<option value="">Select a Subject</option>';
+    if (attSelect)
+      attSelect.innerHTML = '<option value="">Select a Subject</option>';
+
+    if (teacherSubjects.length === 0) {
+      if (subjectBody)
+        subjectBody.innerHTML =
+          '<tr><td colspan="4" style="text-align:center; color: var(--gray-color);">No subjects assigned to you yet.</td></tr>';
+    } else {
+      teacherSubjects.forEach((subj) => {
+        // Populate Table
+        if (subjectBody) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+                        <td style="font-weight: 700; color: var(--primary-color);">${subj.code || "N/A"}</td>
+                        <td style="font-weight: 600;">${subj.title}</td>
+                        <td style="color: var(--gray-color);">${subj.department || "General"}</td>
+                        <td><span class="badge role" style="background: #eff6ff; color: var(--primary-color);">Active</span></td>
+                    `;
+          subjectBody.appendChild(tr);
+        }
+        // Populate Dropdowns
+        const opt = `<option value="${subj.id}">${subj.title}</option>`;
+        if (assignSelect) assignSelect.insertAdjacentHTML("beforeend", opt);
+        if (attSelect) attSelect.insertAdjacentHTML("beforeend", opt);
+      });
+    }
+  } catch (e) {
+    console.error("Failed to load subjects:", e);
+  }
+
+  // 3. Post Assignment Logic
+  const assignForm = document.getElementById("assignment-form");
+  if (assignForm) {
+    assignForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const subjectId = document.getElementById("assign-subject").value;
-      const title = document.getElementById("assign-title").value;
-      const desc = document.getElementById("assign-desc").value;
-      const deadline = document.getElementById("assign-deadline").value;
-      const fileInput = document.getElementById("assign-file");
+      const submitBtn = assignForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML =
+        '<i class="fas fa-spinner fa-spin"></i> Publishing...';
+      submitBtn.disabled = true;
 
-      if (!subjectId) {
-        alert("Please select a subject first.");
-        return;
-      }
-
-      // We convert datetime-local to ISO string
-      let isoDeadline;
-      try {
-        isoDeadline = new Date(deadline).toISOString();
-      } catch (e) {
-        alert("Invalid date format");
-        return;
-      }
+      const payload = {
+        title: document.getElementById("assign-title").value,
+        description: document.getElementById("assign-desc").value,
+        due_date: new Date(
+          document.getElementById("assign-deadline").value,
+        ).toISOString(),
+        subject_id: parseInt(document.getElementById("assign-subject").value),
+      };
 
       try {
-        // First create the assignment (without file)
-        const created = await api.post("/assignments/", {
-          title: title,
-          description: desc,
-          subject_id: parseInt(subjectId),
-          due_date: isoDeadline,
+        const response = await fetch("http://localhost:8000/api/assignments/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
         });
 
-        // If a file is attached, upload it
-        if (fileInput.files.length > 0) {
-          const formData = new FormData();
-          formData.append("file", fileInput.files[0]);
-          await api.post(`/assignments/${created.id}/upload`, formData, true);
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.detail || "Failed to post assignment.");
         }
 
-        alert("Assignment posted successfully!");
-        document.getElementById("assignment-form").reset();
+        if (typeof window.showCustomAlert === "function")
+          window.showCustomAlert(
+            "Success",
+            "Assignment published to students successfully!",
+            "fas fa-check-circle",
+            "#10b981",
+          );
+        else alert("Assignment published successfully!");
+
+        assignForm.reset();
       } catch (err) {
-        alert("Failed to post assignment: " + err.message);
+        if (typeof window.showCustomAlert === "function")
+          window.showCustomAlert(
+            "Error",
+            err.message,
+            "fas fa-times-circle",
+            "#ef4444",
+          );
+        else alert(err.message);
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
       }
     });
+  }
 
-  // Mark Attendance
-  document
-    .getElementById("attendance-form")
-    .addEventListener("submit", async (e) => {
+  // 4. Mark Attendance Logic
+  const attForm = document.getElementById("attendance-form");
+  if (attForm) {
+    attForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const subjectId = document.getElementById("att-subject").value;
-      const studentId = document.getElementById("student-select").value;
-      const status = document.getElementById("attendance-status").value;
+      const submitBtn = attForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+      submitBtn.disabled = true;
 
-      if (!subjectId || !studentId) {
-        alert("Please select both subject and student.");
-        return;
-      }
-
-      // Current date in YYYY-MM-DD
-      const dateStr = new Date().toISOString().split("T")[0];
+      const payload = {
+        student_id: parseInt(document.getElementById("att-student-id").value),
+        subject_id: parseInt(document.getElementById("att-subject").value),
+        status: document.getElementById("att-status").value,
+        date: new Date().toISOString().split("T")[0], // Today's date (YYYY-MM-DD)
+      };
 
       try {
-        await api.post("/attendance/", {
-          student_id: parseInt(studentId),
-          subject_id: parseInt(subjectId),
-          date: dateStr,
-          status: status,
+        const response = await fetch("http://localhost:8000/api/attendance/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
         });
-        alert("Attendance marked successfully!");
-        // Reset just the student and status
-        document.getElementById("student-select").value = "";
-        document.getElementById("attendance-status").value = "present";
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.detail || "Failed to mark attendance.");
+        }
+
+        if (typeof window.showCustomAlert === "function")
+          window.showCustomAlert(
+            "Success",
+            "Attendance logged successfully!",
+            "fas fa-user-check",
+            "#10b981",
+          );
+        else alert("Attendance logged successfully!");
+
+        // Clear student ID to allow quick marking of next student
+        document.getElementById("att-student-id").value = "";
       } catch (err) {
-        alert("Error marking attendance: " + err.message);
+        if (typeof window.showCustomAlert === "function")
+          window.showCustomAlert(
+            "Error",
+            err.message,
+            "fas fa-exclamation-triangle",
+            "#ef4444",
+          );
+        else alert(err.message);
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
       }
     });
-});
-
-async function loadSubjects(teacherId) {
-  try {
-    const subjects = await api.get("/subjects/");
-    const container = document.getElementById("subjects-container");
-    const assignDropdown = document.getElementById("assign-subject");
-    const attDropdown = document.getElementById("att-subject");
-
-    container.innerHTML = "";
-    assignDropdown.innerHTML = '<option value="">Select a subject...</option>';
-    attDropdown.innerHTML = '<option value="">Select a subject...</option>';
-
-    if (subjects.length === 0) {
-      container.innerHTML =
-        '<p style="color: var(--text-muted); padding: 1rem;">No subjects created yet.</p>';
-      return;
-    }
-
-    subjects.forEach((s) => {
-      // Dropdowns
-      const opt = `<option value="${s.id}">${s.title}</option>`;
-      assignDropdown.innerHTML += opt;
-      attDropdown.innerHTML += opt;
-
-      // Cards
-      const card = document.createElement("div");
-      card.className = "stat-card";
-      card.innerHTML = `
-                <h4 style="color: white; font-size: 1.2rem; margin-bottom: 0.5rem;">${s.title}</h4>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">${s.description}</p>
-                <div style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 1rem;">
-                    <span style="font-size: 0.8rem; color: var(--primary-color);">ID: ${s.id}</span>
-                </div>
-            `;
-      container.appendChild(card);
-    });
-  } catch (e) {
-    console.error("Failed to load subjects", e);
   }
-}
+});

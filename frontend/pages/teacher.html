@@ -39,12 +39,6 @@
             onclick="switchTeacherTab('mysubjects', this)"
             ><i class="fas fa-book-open"></i> <span>My Subjects</span></a
           >
-          <a
-            href="#"
-            class="nav-item"
-            onclick="switchTeacherTab('submissions', this)"
-            ><i class="fas fa-inbox"></i> <span>Submissions</span></a
-          >
         </nav>
       </aside>
 
@@ -95,7 +89,10 @@
         <div class="content-area">
           <div id="tab-operations" class="tab-content active">
             <div class="dashboard-grid">
-              <div class="card">
+              <div
+                class="card"
+                style="border-top: 4px solid var(--primary-color)"
+              >
                 <h3><i class="fas fa-file-upload"></i> Post Assignment</h3>
                 <form id="assignment-form">
                   <div class="admin-form-group" style="margin-bottom: 12px">
@@ -105,17 +102,28 @@
                       class="admin-form-control"
                       required
                     >
-                      <option value="">Loading...</option>
+                      <option value="">Loading subjects...</option>
                     </select>
                   </div>
                   <div class="admin-form-group" style="margin-bottom: 12px">
-                    <label>Title</label>
+                    <label>Assignment Title</label>
                     <input
                       type="text"
                       id="assign-title"
                       class="admin-form-control"
+                      placeholder="e.g. Chapter 1 Quiz"
                       required
                     />
+                  </div>
+                  <div class="admin-form-group" style="margin-bottom: 12px">
+                    <label>Description</label>
+                    <textarea
+                      id="assign-desc"
+                      class="admin-form-control"
+                      rows="2"
+                      placeholder="Brief details about the task..."
+                      required
+                    ></textarea>
                   </div>
                   <div class="admin-form-group" style="margin-bottom: 12px">
                     <label>Deadline</label>
@@ -129,14 +137,14 @@
                   <button
                     type="submit"
                     class="btn btn-primary"
-                    style="width: 100%"
+                    style="width: 100%; margin-top: 10px"
                   >
                     Publish Assignment
                   </button>
                 </form>
               </div>
 
-              <div class="card">
+              <div class="card" style="border-top: 4px solid #10b981">
                 <h3><i class="fas fa-clipboard-check"></i> Mark Attendance</h3>
                 <form id="attendance-form">
                   <div class="admin-form-group" style="margin-bottom: 12px">
@@ -146,16 +154,16 @@
                       class="admin-form-control"
                       required
                     >
-                      <option value="">Loading...</option>
+                      <option value="">Loading subjects...</option>
                     </select>
                   </div>
                   <div class="admin-form-group" style="margin-bottom: 12px">
-                    <label>Student ID/Email</label>
+                    <label>Student ID</label>
                     <input
-                      type="text"
-                      id="att-student-email"
+                      type="number"
+                      id="att-student-id"
                       class="admin-form-control"
-                      placeholder="Student Email or ID"
+                      placeholder="Enter Numeric Student ID"
                       required
                     />
                   </div>
@@ -170,7 +178,7 @@
                   <button
                     type="submit"
                     class="btn btn-success"
-                    style="width: 100%"
+                    style="width: 100%; margin-top: 10px"
                   >
                     Save Attendance
                   </button>
@@ -188,8 +196,8 @@
                     <tr>
                       <th>Subject Code</th>
                       <th>Title</th>
-                      <th>Total Students</th>
-                      <th>Actions</th>
+                      <th>Department</th>
+                      <th>Status</th>
                     </tr>
                   </thead>
                   <tbody id="teacher-subjects-body">
@@ -201,15 +209,6 @@
                   </tbody>
                 </table>
               </div>
-            </div>
-          </div>
-
-          <div id="tab-submissions" class="tab-content">
-            <div class="card">
-              <h3><i class="fas fa-inbox"></i> Student Submissions</h3>
-              <p style="color: var(--gray-color)">
-                Select an assignment from your subjects to view submissions.
-              </p>
             </div>
           </div>
         </div>

@@ -10,7 +10,6 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <style>
-      /* Modal Specific Styles */
       .social-login {
         display: flex;
         gap: 1.25rem;
@@ -46,8 +45,6 @@
         border-color: #24292e;
         box-shadow: 0 10px 20px rgba(36, 41, 46, 0.2);
       }
-
-      /* Password Toggle Styles for Modal */
       .password-container {
         position: relative;
         display: flex;
@@ -73,8 +70,7 @@
     <nav class="navbar">
       <div class="nav-container">
         <div class="nav-brand">
-          <i class="fas fa-graduation-cap"></i>
-          <span>CampusConnect</span>
+          <i class="fas fa-graduation-cap"></i><span>CampusConnect</span>
         </div>
         <ul class="nav-menu">
           <li><a href="#home">Home</a></li>
@@ -88,11 +84,7 @@
             Register
           </button>
         </div>
-        <div class="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+        <div class="hamburger"><span></span><span></span><span></span></div>
       </div>
     </nav>
 
@@ -219,7 +211,6 @@
           >
             Log In
           </button>
-
           <div
             style="
               display: flex;
@@ -235,9 +226,8 @@
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
                 margin-right: 10px;
               "
-            ></span>
-            or continue with
-            <span
+            ></span
+            >or continue with<span
               style="
                 flex: 1;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -245,7 +235,6 @@
               "
             ></span>
           </div>
-
           <div class="social-login">
             <button
               type="button"
@@ -311,6 +300,20 @@
               <option value="teacher">Teacher</option>
             </select>
           </div>
+          <div class="form-group">
+            <label class="form-label">Department</label>
+            <select id="reg-department" class="form-control" required>
+              <option value="" disabled selected>Select Your Department</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Software Engineering">Software Engineering</option>
+              <option value="Business Administration">
+                Business Administration (BBA)
+              </option>
+              <option value="Information Technology">
+                Information Technology
+              </option>
+            </select>
+          </div>
           <button
             type="submit"
             class="btn btn-primary btn-block"
@@ -318,7 +321,6 @@
           >
             Create Account
           </button>
-
           <div
             style="
               display: flex;
@@ -334,9 +336,8 @@
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
                 margin-right: 10px;
               "
-            ></span>
-            or sign up with
-            <span
+            ></span
+            >or sign up with<span
               style="
                 flex: 1;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -344,7 +345,6 @@
               "
             ></span>
           </div>
-
           <div class="social-login">
             <button
               type="button"
@@ -413,9 +413,7 @@
         <h2>Powerful Features</h2>
         <div class="features-grid">
           <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-tasks"></i>
-            </div>
+            <div class="feature-icon"><i class="fas fa-tasks"></i></div>
             <h3>Assignment Management</h3>
             <p>
               Teachers create and manage assignments. Students submit work with
@@ -423,9 +421,7 @@
             </p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-chart-bar"></i>
-            </div>
+            <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
             <h3>Track Your Performance</h3>
             <p>
               Visual progress dashboards with beautiful charts and graphs.
@@ -433,9 +429,7 @@
             </p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-check-circle"></i>
-            </div>
+            <div class="feature-icon"><i class="fas fa-check-circle"></i></div>
             <h3>Attendance Tracking</h3>
             <p>
               Automatic email notifications when marked absent or late. Stay
@@ -487,11 +481,9 @@
         <div class="testimonials-grid">
           <div class="testimonial-card">
             <div class="stars">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i>
             </div>
             <p>
               "CampusConnect has made managing my assignments so easy. I can see
@@ -502,11 +494,9 @@
           </div>
           <div class="testimonial-card">
             <div class="stars">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i>
             </div>
             <p>
               "As a teacher, this platform helps me track student progress
@@ -517,11 +507,9 @@
           </div>
           <div class="testimonial-card">
             <div class="stars">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i><i class="fas fa-star"></i
+              ><i class="fas fa-star"></i>
             </div>
             <p>
               "The admin dashboard gives us complete control. Best investment
@@ -678,10 +666,10 @@
             <i class="fas fa-share-alt"></i>
             <h3>Follow Us</h3>
             <div class="social-links">
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-linkedin"></i></a>
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-github"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a
+              ><a href="#"><i class="fab fa-linkedin"></i></a
+              ><a href="#"><i class="fab fa-facebook"></i></a
+              ><a href="#"><i class="fab fa-github"></i></a>
             </div>
           </div>
         </div>
@@ -750,9 +738,9 @@
         <div class="footer-bottom">
           <p>&copy; 2026 CampusConnect. All rights reserved.</p>
           <div class="footer-badges">
-            <span><i class="fas fa-lock"></i> Secure</span>
-            <span><i class="fas fa-shield-alt"></i> Protected</span>
-            <span><i class="fas fa-certificate"></i> Verified</span>
+            <span><i class="fas fa-lock"></i> Secure</span
+            ><span><i class="fas fa-shield-alt"></i> Protected</span
+            ><span><i class="fas fa-certificate"></i> Verified</span>
           </div>
         </div>
       </div>

@@ -42,6 +42,12 @@
           <a
             href="#"
             class="nav-item"
+            onclick="switchStudentTab('enrollment', this)"
+            ><i class="fas fa-plus-circle"></i> <span>Enroll Subjects</span></a
+          >
+          <a
+            href="#"
+            class="nav-item"
             onclick="switchStudentTab('profile', this)"
             ><i class="fas fa-user-cog"></i> <span>Profile</span></a
           >
@@ -125,18 +131,17 @@
                 </div>
               </div>
               <div class="stat-card" style="border-top: 4px solid #10b981">
-                <span class="stat-title">Enrolled Subjects</span>
-                <span class="stat-value" id="stat-subjects">0</span>
+                <span class="stat-title">Enrolled Subjects</span
+                ><span class="stat-value" id="stat-subjects">0</span>
               </div>
               <div
                 class="stat-card"
                 style="border-top: 4px solid var(--warning-color)"
               >
-                <span class="stat-title">Pending Assignments</span>
-                <span class="stat-value" id="stat-assignments-due">0</span>
+                <span class="stat-title">Pending Assignments</span
+                ><span class="stat-value" id="stat-assignments-due">0</span>
               </div>
             </div>
-
             <div class="card" style="margin-top: 20px">
               <h3><i class="fas fa-book"></i> Subject Analytics</h3>
               <div class="table-container">
@@ -146,7 +151,7 @@
                       <th>Subject</th>
                       <th>Attendance</th>
                       <th>Assignments Given</th>
-                      <th>Status</th>
+                      <th>Marks Obtained</th>
                     </tr>
                   </thead>
                   <tbody id="subject-analytics-body">
@@ -164,9 +169,21 @@
           <div id="tab-assignments" class="tab-content">
             <div class="card">
               <h3><i class="fas fa-tasks"></i> My Assignments</h3>
-              <div class="dashboard-grid" id="assignments-list">
+              <div class="dashboard-grid" id="assignments-list"></div>
+            </div>
+          </div>
+
+          <div id="tab-enrollment" class="tab-content">
+            <div class="card">
+              <h3>
+                <i class="fas fa-compass"></i> Available Subjects to Enroll
+              </h3>
+              <p style="color: var(--gray-color); margin-bottom: 20px">
+                Browse and register for subjects offered by your department.
+              </p>
+              <div class="dashboard-grid" id="available-subjects-list">
                 <p style="color: var(--gray-color); grid-column: 1 / -1">
-                  No pending assignments.
+                  Loading available subjects...
                 </p>
               </div>
             </div>
@@ -177,8 +194,8 @@
               <h3><i class="fas fa-user-edit"></i> Edit Profile Details</h3>
               <form id="profile-form">
                 <div class="admin-form-group" style="margin-bottom: 15px">
-                  <label>Full Name</label>
-                  <input
+                  <label>Full Name</label
+                  ><input
                     type="text"
                     id="profile-name"
                     class="admin-form-control"
@@ -186,8 +203,8 @@
                   />
                 </div>
                 <div class="admin-form-group" style="margin-bottom: 15px">
-                  <label>Department / Major</label>
-                  <input
+                  <label>Department / Major</label
+                  ><input
                     type="text"
                     id="profile-department"
                     class="admin-form-control"
@@ -206,28 +223,6 @@
           </div>
         </div>
       </main>
-    </div>
-
-    <div
-      class="auth-modal"
-      id="assignment-modal"
-      style="display: none; z-index: 9999"
-    >
-      <div class="modal-overlay" onclick="closeModal()"></div>
-      <div class="modal-content custom-popup-card">
-        <h3 style="color: black; margin-bottom: 10px">Notification</h3>
-        <p style="color: #64748b; margin-bottom: 20px">
-          Please check your dashboard.
-        </p>
-        <button
-          class="btn btn-primary btn-block"
-          onclick="
-            document.getElementById('assignment-modal').style.display = 'none'
-          "
-        >
-          Acknowledge
-        </button>
-      </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

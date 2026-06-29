@@ -77,6 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = document.getElementById("reg-email").value;
     const password = document.getElementById("reg-password").value;
     const role = document.getElementById("reg-role").value;
+    // NAYA: Department field get kiya
+    const department = document.getElementById("reg-department").value;
+
     const btn = registerForm.querySelector("button");
     const originalText = btn.textContent;
 
@@ -84,11 +87,13 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.textContent = "Creating account...";
       btn.disabled = true;
 
+      // NAYA: payload me department send kiya
       await api.post("/auth/register", {
         name,
         email,
         password,
         role,
+        department,
       });
 
       showError(
